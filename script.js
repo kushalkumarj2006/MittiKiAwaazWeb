@@ -36,11 +36,10 @@ function $(id) { return document.getElementById(id); }
 function $$(sel) { return document.querySelectorAll(sel); }
 
 // ============================================
-// LANGUAGE DATA - FULL
+// LANGUAGE DATA
 // ============================================
 const LANG = {
   hi: {
-    name: 'हिंदी',
     code: 'hi-IN',
     greeting: '👋 नमस्ते! मैं कृषि सखी हूँ। आज आपके खेत का क्या हाल है?',
     online: '● ऑनलाइन',
@@ -50,7 +49,6 @@ const LANG = {
     error: 'क्षमा करें, कुछ गड़बड़ हो गई। कृपया फिर से प्रयास करें।'
   },
   kn: {
-    name: 'ಕನ್ನಡ',
     code: 'kn-IN',
     greeting: '👋 ನಮಸ್ತೆ! ನಾನು ಕೃಷಿ ಸಖಿ. ಇಂದು ನಿಮ್ಮ ಹೊಲದ ಸ್ಥಿತಿ ಹೇಗಿದೆ?',
     online: '● ಆನ್ಲೈನ್',
@@ -60,7 +58,6 @@ const LANG = {
     error: 'ಕ್ಷಮಿಸಿ, ಏನೋ ತಪ್ಪಾಗಿದೆ. ದಯವಿಟ್ಟು ಮತ್ತೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ.'
   },
   mr: {
-    name: 'मराठी',
     code: 'mr-IN',
     greeting: '👋 नमस्कार! मी कृषी सखी आहे. आज तुमच्या शेताची काय परिस्थिती आहे?',
     online: '● ऑनलाइन',
@@ -70,7 +67,6 @@ const LANG = {
     error: 'क्षमस्व, काहीतरी चूक झाली. कृपया पुन्हा प्रयत्न करा.'
   },
   en: {
-    name: 'English',
     code: 'en-US',
     greeting: '👋 Namaste! I am Krishi Sakhi. How is your field today?',
     online: '● Online',
@@ -150,15 +146,15 @@ function showScreen(screenId) {
 }
 
 // ============================================
-// LANGUAGE - FULL
+// LANGUAGE
 // ============================================
 function setLanguage(lang) {
   AppState.language = lang;
-  const langData = LANG[lang];
   
   DOM.langBtns.forEach(btn => {
     btn.classList.toggle('active', btn.dataset.lang === lang);
   });
+  
   DOM.qlangs.forEach(btn => {
     btn.classList.toggle('active', btn.dataset.lang === lang);
   });
@@ -169,44 +165,17 @@ function setLanguage(lang) {
     DOM.appTitle.textContent = titles[lang] || 'Mitti Ki Awaaz';
   }
   
-  // Update all text elements
-  document.querySelectorAll('[data-en]').forEach(el => {
-    const text = el.dataset[lang];
-    if (text) {
-      if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-        el.placeholder = text;
-      } else if (el.tagName === 'LABEL') {
-        el.textContent = text;
-      } else if (el.tagName === 'BUTTON') {
-        const span = el.querySelector('span');
-        if (span && span.dataset[lang]) {
-          span.textContent = span.dataset[lang];
-        } else {
-          el.textContent = text;
-        }
-      } else {
-        const textNodes = [];
-        el.childNodes.forEach(node => {
-          if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
-            textNodes.push(node);
-          }
-        });
-        if (textNodes.length > 0) {
-          textNodes[0].textContent = text;
-        } else if (el.childNodes.length === 0) {
-          el.textContent = text;
-        }
-      }
-    }
-  });
-  
   // Update greeting
   if (DOM.chatContainer && DOM.chatContainer.children.length === 0) {
     DOM.chatContainer.innerHTML = '';
-    addMessage('Krishi Sakhi', langData.greeting, false);
+    addMessage('Krishi Sakhi', LANG[lang].greeting, false);
   }
   
-  // Update shortcuts
+  if (DOM.statusBadge) {
+    DOM.statusBadge.textContent = LANG[lang].online;
+  }
+  
+  // Update shortcuts - ONLY the text inside the button, NOT the emoji
   DOM.shortcuts.forEach(btn => {
     const query = btn.dataset[`query-${lang}`];
     if (query) btn.dataset.query = query;
@@ -216,9 +185,9 @@ function setLanguage(lang) {
     }
   });
   
-  updateStatus('online');
   updatePhDisplay();
   localStorage.setItem('mittiLang', lang);
+  Logger.success(`✅ Language set to: ${lang}`);
 }
 
 function updateStatus(status) {
@@ -231,7 +200,7 @@ function updateStatus(status) {
 }
 
 // ============================================
-// GEMINI API - REAL
+// GEMINI API - REAL IMPLEMENTATION
 // ============================================
 async function callGeminiAPI(message) {
   const lang = AppState.language;
@@ -243,7 +212,9 @@ async function callGeminiAPI(message) {
       body: JSON.stringify({ message, language: lang })
     });
     
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
     
     const data = await response.json();
     return data.response || getFallbackResponse(message);
@@ -263,7 +234,9 @@ async function analyzeSoilAPI(ph) {
       body: JSON.stringify({ ph, language: lang })
     });
     
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
     
     const data = await response.json();
     return data.response || getFallbackResponse('soil');
@@ -644,7 +617,7 @@ function navigateTo(screen) {
 }
 
 // ============================================
-// CHECKLISTS - LANGUAGE SPECIFIC
+// CHECKLISTS
 // ============================================
 const CHECKLISTS = {
   livestock: {
@@ -735,7 +708,7 @@ function setupEvents() {
   
   if (DOM.settingsBtn) {
     DOM.settingsBtn.addEventListener('click', () => {
-      alert(`⚙️ Settings\n\nLanguage: ${LANG[AppState.language].name}\nUser: ${AppState.userName}\nScans: ${AppState.soilHistory.length}`);
+      alert(`⚙️ Settings\n\nLanguage: ${LANG[AppState.language].name || AppState.language}\nUser: ${AppState.userName}\nScans: ${AppState.soilHistory.length}`);
     });
   }
   
