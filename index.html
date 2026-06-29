@@ -49,7 +49,7 @@
       </div>
       
       <div class="input-group">
-        <label class="input-label" data-en="🔐 Security PIN" data-hi="🔐 4-डिजिट PIN" data-kn="🔐 4-ಅಂಕಿಯ PIN" data-mr="🔐 4-अंकी PIN">🔐 4-डिजिट PIN</label>
+        <label class="input-label" data-en="🔐 4-Digit PIN" data-hi="🔐 4-डिजिट PIN" data-kn="🔐 4-ಅಂಕಿಯ PIN" data-mr="🔐 4-अंकी PIN">🔐 4-डिजिट PIN</label>
         <input type="password" id="pinCode" class="input-field" placeholder="1234" value="1234" maxlength="4" inputmode="numeric" />
       </div>
       
@@ -145,7 +145,7 @@
     </div>
 
     <!-- ==========================================
-    PAGE: SOIL SCAN
+    PAGE: SOIL SCAN - WITH SLIDER
     ========================================== -->
     <div id="soilScreen" class="page">
       <div class="soil-container">
@@ -154,18 +154,23 @@
           <p class="page-subtitle" data-en="Know your soil health" data-hi="अपनी मिट्टी की सेहत जानें" data-kn="ನಿಮ್ಮ ಮಣ್ಣಿನ ಆರೋಗ್ಯ ತಿಳಿಯಿರಿ" data-mr="तुमच्या मातीची तब्येत जाणून घ्या">अपनी मिट्टी की सेहत जानें</p>
         </div>
         
-        <!-- pH Selector -->
+        <!-- pH Selector with Slider -->
         <div class="ph-selector">
-          <label class="ph-label" data-en="📊 Select pH Value" data-hi="📊 पीएच मान चुनें" data-kn="📊 pH ಮೌಲ್ಯ ಆಯ್ಕೆಮಾಡಿ" data-mr="📊 pH मूल्य निवडा">📊 पीएच मान चुनें</label>
-          <div class="ph-chips" id="phChips">
-            <button class="ph-chip" data-ph="4.0">4.0</button>
-            <button class="ph-chip" data-ph="5.0">5.0</button>
-            <button class="ph-chip active" data-ph="5.8">5.8</button>
-            <button class="ph-chip" data-ph="6.5">6.5</button>
-            <button class="ph-chip" data-ph="7.2">7.2</button>
-            <button class="ph-chip" data-ph="8.0">8.0</button>
-            <button class="ph-chip" data-ph="9.0">9.0</button>
+          <label class="ph-label" data-en="📊 Slide to select pH Value" data-hi="📊 स्लाइड करके पीएच मान चुनें" data-kn="📊 ಸ್ಲೈಡ್ ಮಾಡಿ pH ಮೌಲ್ಯ ಆಯ್ಕೆಮಾಡಿ" data-mr="📊 स्लाइड करून pH मूल्य निवडा">📊 स्लाइड करके पीएच मान चुनें</label>
+          
+          <!-- pH Slider - Interactive -->
+          <input type="range" id="phSlider" min="3.0" max="9.5" step="0.1" value="5.8" style="width:100%;margin:10px 0;accent-color:#2E7D32;height:8px;border-radius:4px;" />
+          
+          <!-- pH Color Scale Indicator -->
+          <div style="display:flex;justify-content:space-between;padding:0 4px;font-size:10px;color:var(--grey);margin-top:-4px;">
+            <span>3.0</span>
+            <span style="color:#D84315;">酸性</span>
+            <span style="color:#E8A838;">中性</span>
+            <span style="color:#2E7D32;">理想</span>
+            <span style="color:#3F51B5;">碱性</span>
+            <span>9.5</span>
           </div>
+          
           <div class="ph-display" id="phDisplay">
             <span class="ph-value" id="phValue">5.8</span>
             <span class="ph-label" id="phLabel" data-en="Moderately Acidic" data-hi="मध्यम अम्लीय" data-kn="ಮಧ್ಯಮ ಆಮ್ಲೀಯ" data-mr="मध्यम आम्लयुक्त">मध्यम अम्लीय</span>
