@@ -48,12 +48,14 @@ body {
   background: var(--beige);
   color: var(--dark);
   height: 100vh;
+  width: 100vw;
   overflow: hidden;
   touch-action: manipulation;
+  position: relative;
 }
 
 /* ============================================
-   SCREENS
+   SCREENS - FIXED
    ============================================ */
 .screen {
   display: none;
@@ -61,13 +63,17 @@ body {
   width: 100vw;
   max-width: 480px;
   margin: 0 auto;
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
   background: var(--beige);
   overflow: hidden;
+  z-index: 1;
 }
 
 .screen.active {
-  display: flex;
+  display: flex !important;
   flex-direction: column;
 }
 
@@ -79,6 +85,10 @@ body {
   justify-content: center;
   align-items: center;
   z-index: 1000;
+}
+
+#loadingScreen.active {
+  display: flex !important;
 }
 
 .loading-container {
@@ -145,11 +155,17 @@ body {
   justify-content: center;
   align-items: center;
   padding: 20px;
+  z-index: 10;
+}
+
+#loginScreen.active {
+  display: flex !important;
 }
 
 .login-card {
   background: rgba(255,255,255,0.97);
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-radius: var(--radius-lg);
   padding: 32px 24px;
   width: 100%;
@@ -289,6 +305,18 @@ body {
   font-size: 11px;
   color: var(--grey);
   opacity: 0.8;
+}
+
+/* ============================================
+   APP SCREEN
+   ============================================ */
+#appScreen {
+  z-index: 5;
+}
+
+#appScreen.active {
+  display: flex !important;
+  flex-direction: column;
 }
 
 /* ============================================
@@ -439,7 +467,7 @@ body {
 }
 
 .page.active {
-  display: flex;
+  display: flex !important;
 }
 
 .page-header {
@@ -814,7 +842,7 @@ body {
   font-weight: 800;
 }
 
-.ph-label {
+.ph-label-text {
   font-size: 14px;
   opacity: 0.8;
   font-weight: 600;
@@ -1178,6 +1206,7 @@ body {
   margin: 0 auto 8px;
   position: relative;
   box-shadow: inset 0 2px 8px rgba(0,0,0,0.06);
+  transition: background 0.5s ease;
 }
 
 .score-circle::after {
@@ -1393,6 +1422,7 @@ body {
   text-align: center;
   animation: toastIn 0.4s ease-out;
   border: 1px solid rgba(255,255,255,0.1);
+  transition: opacity 0.3s ease;
 }
 
 @keyframes toastIn {
@@ -1440,6 +1470,7 @@ body {
   
   .alert-actions {
     padding-left: 0;
+    flex-wrap: wrap;
   }
   
   .checklist-grid {
@@ -1454,6 +1485,13 @@ body {
   
   .scheme-btn {
     width: 100%;
+  }
+  
+  .toast {
+    bottom: 70px;
+    padding: 10px 16px;
+    font-size: 13px;
+    max-width: 92%;
   }
 }
 
@@ -1480,6 +1518,21 @@ body {
   .nav-item .nav-label {
     font-size: 9px;
   }
+  
+  .login-title {
+    font-size: 20px;
+  }
+  
+  .avatar {
+    width: 64px;
+    height: 64px;
+    font-size: 44px;
+  }
+  
+  .avatar-pulse {
+    width: 90px;
+    height: 90px;
+  }
 }
 
 @media (min-width: 481px) {
@@ -1491,7 +1544,7 @@ body {
 }
 
 /* ============================================
-   DARK MODE SUPPORT (Optional)
+   DARK MODE SUPPORT
    ============================================ */
 @media (prefers-color-scheme: dark) {
   :root {
@@ -1509,6 +1562,14 @@ body {
   
   .login-card {
     background: rgba(30,30,30,0.97);
+  }
+  
+  .login-title {
+    color: var(--gold-light);
+  }
+  
+  .login-subtitle {
+    color: var(--grey);
   }
   
   .message.ai .msg-bubble {
@@ -1534,6 +1595,10 @@ body {
     color: var(--dark);
   }
   
+  .input-area input::placeholder {
+    color: var(--grey);
+  }
+  
   .ph-selector,
   .nutrient,
   .result-card,
@@ -1547,9 +1612,20 @@ body {
     color: var(--dark);
   }
   
-  .alert-card.critical { background: #2A1410; }
-  .alert-card.warning { background: #2A1F0A; }
-  .alert-card.info { background: #0A1A2A; }
+  .alert-card.critical { 
+    background: #2A1410; 
+    border-left-color: var(--red);
+  }
+  
+  .alert-card.warning { 
+    background: #2A1F0A; 
+    border-left-color: var(--gold);
+  }
+  
+  .alert-card.info { 
+    background: #0A1A2A; 
+    border-left-color: var(--blue);
+  }
   
   .toast {
     background: var(--dark);
@@ -1566,5 +1642,124 @@ body {
   
   .nav-item.active {
     color: var(--green-light);
+  }
+  
+  .status-badge {
+    background: var(--leaf);
+    color: var(--green-light);
+  }
+  
+  .qlang {
+    background: var(--white);
+    color: var(--grey);
+  }
+  
+  .qlang.active {
+    background: var(--leaf);
+    color: var(--green-light);
+    border-color: var(--green-light);
+  }
+  
+  .score-circle::after {
+    background: var(--white);
+  }
+  
+  .score-circle span {
+    color: var(--dark);
+  }
+  
+  .scheme-card {
+    background: linear-gradient(135deg, var(--leaf), var(--leaf-dark));
+  }
+  
+  .ph-display {
+    background: var(--white);
+  }
+  
+  .history-empty {
+    background: var(--white);
+    color: var(--grey);
+  }
+  
+  .input-field {
+    background: var(--white);
+    color: var(--dark);
+  }
+  
+  .input-field::placeholder {
+    color: var(--grey);
+  }
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+.hidden {
+  display: none !important;
+}
+
+.visible {
+  display: flex !important;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mt-8 {
+  margin-top: 8px;
+}
+
+.mb-8 {
+  margin-bottom: 8px;
+}
+
+.mt-16 {
+  margin-top: 16px;
+}
+
+.mb-16 {
+  margin-bottom: 16px;
+}
+
+/* ============================================
+   SAFE AREA SUPPORT (iOS)
+   ============================================ */
+@supports (padding: max(0px)) {
+  .bottom-nav {
+    padding-bottom: max(4px, env(safe-area-inset-bottom));
+  }
+  
+  .toast {
+    bottom: max(80px, env(safe-area-inset-bottom));
+  }
+  
+  #loginScreen {
+    padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+  }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+@media print {
+  .screen {
+    position: static !important;
+    transform: none !important;
+    max-width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+  
+  .screen.active {
+    display: block !important;
+  }
+  
+  .bottom-nav,
+  .app-header,
+  .input-area,
+  .mic-btn,
+  .send-btn {
+    display: none !important;
   }
 }
