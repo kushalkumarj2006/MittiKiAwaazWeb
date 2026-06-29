@@ -8,7 +8,6 @@
 // ============================================
 
 const Logger = {
-  // Log levels with colors
   levels: {
     INFO: { emoji: '📘', color: '#2196F3', label: 'INFO' },
     SUCCESS: { emoji: '✅', color: '#4CAF50', label: 'SUCCESS' },
@@ -22,7 +21,6 @@ const Logger = {
     FALLBACK: { emoji: '📋', color: '#FF9800', label: 'FALLBACK' }
   },
 
-  // Log to console with style
   log(level, message, data = null) {
     try {
       const levelInfo = this.levels[level] || this.levels.INFO;
@@ -57,7 +55,6 @@ const Logger = {
         this._buffer.shift();
       }
     } catch (e) {
-      // Fallback logging if something goes wrong
       console.log(`[${level}] ${message}`, data || '');
     }
   },
@@ -76,7 +73,6 @@ const Logger = {
   _buffer: []
 };
 
-// Expose logger globally
 window.__logger = Logger;
 
 // ============================================
@@ -123,7 +119,7 @@ function saveState() {
 }
 
 // ============================================
-// 📱 DOM REFS WITH SAFE CHECKS
+// 📱 DOM REFS
 // ============================================
 
 function $(id) {
@@ -142,95 +138,54 @@ function $$(sel) {
   return els;
 }
 
-// DOM Elements with safe initialization
-const DOM = {
-  loadingScreen: null,
-  loginScreen: null,
-  appScreen: null,
-  loginBtn: null,
-  farmerName: null,
-  phoneNumber: null,
-  pinCode: null,
-  langBtns: null,
-  userName: null,
-  logoutBtn: null,
-  settingsBtn: null,
-  navItems: null,
-  chatContainer: null,
-  chatInput: null,
-  sendBtn: null,
-  micBtn: null,
-  avatarPulse: null,
-  statusBadge: null,
-  qlangs: null,
-  shortcuts: null,
-  phChips: null,
-  phValue: null,
-  phLabel: null,
-  phDisplay: null,
-  analyzeBtn: null,
-  soilResult: null,
-  soilResultText: null,
-  speakResultBtn: null,
-  historyList: null,
-  ackBtns: null,
-  speakAlertBtns: null,
-  checklistBtns: null,
-  checklistDisplay: null,
-  checklistTitle: null,
-  checklistContent: null,
-  closeChecklist: null,
-  scoreValue: null,
-  scoreCircle: null,
-  generateSchemeBtn: null,
-  schemeItems: null,
-  toast: null,
-  toastMessage: null
-};
+let DOM = {};
 
 function initDOM() {
-  DOM.loadingScreen = $('loadingScreen');
-  DOM.loginScreen = $('loginScreen');
-  DOM.appScreen = $('appScreen');
-  DOM.loginBtn = $('loginBtn');
-  DOM.farmerName = $('farmerName');
-  DOM.phoneNumber = $('phoneNumber');
-  DOM.pinCode = $('pinCode');
-  DOM.langBtns = $$('.lang-btn');
-  DOM.userName = $('userName');
-  DOM.logoutBtn = $('logoutBtn');
-  DOM.settingsBtn = $('settingsBtn');
-  DOM.navItems = $$('.nav-item');
-  DOM.chatContainer = $('chatContainer');
-  DOM.chatInput = $('chatInput');
-  DOM.sendBtn = $('sendBtn');
-  DOM.micBtn = $('micBtn');
-  DOM.avatarPulse = $('avatarPulse');
-  DOM.statusBadge = $('statusBadge');
-  DOM.qlangs = $$('.qlang');
-  DOM.shortcuts = $$('.shortcut');
-  DOM.phChips = $$('.ph-chip');
-  DOM.phValue = $('phValue');
-  DOM.phLabel = $('phLabel');
-  DOM.phDisplay = $('phDisplay');
-  DOM.analyzeBtn = $('analyzeBtn');
-  DOM.soilResult = $('soilResult');
-  DOM.soilResultText = $('soilResultText');
-  DOM.speakResultBtn = $('speakResultBtn');
-  DOM.historyList = $('historyList');
-  DOM.ackBtns = $$('.ack-btn');
-  DOM.speakAlertBtns = $$('.speak-alert-btn');
-  DOM.checklistBtns = $$('.checklist-btn');
-  DOM.checklistDisplay = $('checklistDisplay');
-  DOM.checklistTitle = $('checklistTitle');
-  DOM.checklistContent = $('checklistContent');
-  DOM.closeChecklist = $('closeChecklist');
-  DOM.scoreValue = $('scoreValue');
-  DOM.scoreCircle = $('scoreCircle');
-  DOM.generateSchemeBtn = $('generateSchemeBtn');
-  DOM.schemeItems = $('schemeItems');
-  DOM.toast = $('toast');
-  DOM.toastMessage = $('toastMessage');
+  DOM = {
+    loadingScreen: $('loadingScreen'),
+    loginScreen: $('loginScreen'),
+    appScreen: $('appScreen'),
+    loginBtn: $('loginBtn'),
+    farmerName: $('farmerName'),
+    phoneNumber: $('phoneNumber'),
+    pinCode: $('pinCode'),
+    langBtns: $$('.lang-btn'),
+    userName: $('userName'),
+    logoutBtn: $('logoutBtn'),
+    settingsBtn: $('settingsBtn'),
+    navItems: $$('.nav-item'),
+    chatContainer: $('chatContainer'),
+    chatInput: $('chatInput'),
+    sendBtn: $('sendBtn'),
+    micBtn: $('micBtn'),
+    avatarPulse: $('avatarPulse'),
+    statusBadge: $('statusBadge'),
+    qlangs: $$('.qlang'),
+    shortcuts: $$('.shortcut'),
+    phChips: $$('.ph-chip'),
+    phValue: $('phValue'),
+    phLabel: $('phLabel'),
+    phDisplay: $('phDisplay'),
+    analyzeBtn: $('analyzeBtn'),
+    soilResult: $('soilResult'),
+    soilResultText: $('soilResultText'),
+    speakResultBtn: $('speakResultBtn'),
+    historyList: $('historyList'),
+    ackBtns: $$('.ack-btn'),
+    speakAlertBtns: $$('.speak-alert-btn'),
+    checklistBtns: $$('.checklist-btn'),
+    checklistDisplay: $('checklistDisplay'),
+    checklistTitle: $('checklistTitle'),
+    checklistContent: $('checklistContent'),
+    closeChecklist: $('closeChecklist'),
+    scoreValue: $('scoreValue'),
+    scoreCircle: $('scoreCircle'),
+    generateSchemeBtn: $('generateSchemeBtn'),
+    schemeItems: $('schemeItems'),
+    toast: $('toast'),
+    toastMessage: $('toastMessage'),
+    appTitle: $('appTitle')
+  };
   
   Logger.success('✅ DOM initialized');
 }
@@ -335,7 +290,6 @@ function updateUIText(lang) {
         } else if (el.tagName === 'LABEL') {
           el.textContent = text;
         } else if (el.tagName === 'BUTTON' && !el.classList.contains('lang-btn') && !el.classList.contains('qlang')) {
-          // For buttons that are not language selectors
           const childSpan = el.querySelector('span');
           if (childSpan) {
             const spanText = childSpan.dataset[lang];
@@ -344,12 +298,10 @@ function updateUIText(lang) {
             el.textContent = text;
           }
         } else {
-          // For divs, spans, etc.
           const children = el.children;
           if (children.length === 0) {
             el.textContent = text;
           } else if (el.tagName === 'DIV' || el.tagName === 'SPAN') {
-            // Find text nodes
             const textNodes = [];
             el.childNodes.forEach(node => {
               if (node.nodeType === Node.TEXT_NODE) {
@@ -364,10 +316,9 @@ function updateUIText(lang) {
       }
     });
     
-    const titleEl = DOM.appTitle;
-    if (titleEl && titleEl.dataset) {
-      const title = titleEl.dataset[lang] || 'Mitti Ki Awaaz';
-      titleEl.textContent = title;
+    if (DOM.appTitle && DOM.appTitle.dataset) {
+      const title = DOM.appTitle.dataset[lang] || 'Mitti Ki Awaaz';
+      DOM.appTitle.textContent = title;
     }
   } catch (e) {
     Logger.error('❌ UI text update error', { error: e.message });
@@ -842,9 +793,7 @@ function updateStatus(status) {
     else if (status === 'speaking') text = labels.speaking;
     
     if (DOM.statusBadge) DOM.statusBadge.textContent = text;
-  } catch (e) {
-    // Silent fail
-  }
+  } catch (e) {}
 }
 
 // ============================================
@@ -868,9 +817,7 @@ function showToast(message, type = 'info') {
     toastTimeout = setTimeout(() => {
       if (DOM.toast) DOM.toast.style.display = 'none';
     }, 3000);
-  } catch (e) {
-    // Silent fail
-  }
+  } catch (e) {}
 }
 
 // ============================================
@@ -894,8 +841,15 @@ function login() {
     
     if (DOM.userName) DOM.userName.textContent = name.split(' ')[0];
     
-    if (DOM.loginScreen) DOM.loginScreen.classList.remove('active');
-    if (DOM.appScreen) DOM.appScreen.classList.add('active');
+    // Show app, hide login
+    if (DOM.loginScreen) {
+      DOM.loginScreen.classList.remove('active');
+      DOM.loginScreen.style.display = 'none';
+    }
+    if (DOM.appScreen) {
+      DOM.appScreen.classList.add('active');
+      DOM.appScreen.style.display = 'flex';
+    }
     
     const greeting = LANG_LABELS[AppState.language].greeting;
     if (DOM.chatContainer) {
@@ -910,6 +864,7 @@ function login() {
     saveState();
     
     showToast(`Welcome ${name}! 🌾`, 'success');
+    Logger.success('✅ Login successful');
   } catch (e) {
     Logger.error('❌ Login error', { error: e.message });
   }
@@ -918,11 +873,18 @@ function login() {
 function logout() {
   try {
     AppState.isLoggedIn = false;
-    if (DOM.appScreen) DOM.appScreen.classList.remove('active');
-    if (DOM.loginScreen) DOM.loginScreen.classList.add('active');
+    if (DOM.appScreen) {
+      DOM.appScreen.classList.remove('active');
+      DOM.appScreen.style.display = 'none';
+    }
+    if (DOM.loginScreen) {
+      DOM.loginScreen.classList.add('active');
+      DOM.loginScreen.style.display = 'flex';
+    }
     if (DOM.chatContainer) DOM.chatContainer.innerHTML = '';
     saveState();
     showToast('Logged out successfully', 'info');
+    Logger.success('✅ Logout successful');
   } catch (e) {
     Logger.error('❌ Logout error', { error: e.message });
   }
@@ -963,31 +925,61 @@ function init() {
     // Initialize DOM references
     initDOM();
     
-    // Hide loading screen after delay
+    // Hide loading screen and show login
     setTimeout(() => {
       if (DOM.loadingScreen) {
         DOM.loadingScreen.classList.remove('active');
+        DOM.loadingScreen.style.display = 'none';
         Logger.success('✅ Loading screen hidden');
+      }
+      
+      // Show login screen by default
+      if (DOM.loginScreen) {
+        DOM.loginScreen.classList.add('active');
+        DOM.loginScreen.style.display = 'flex';
+        Logger.success('✅ Login screen shown');
+      }
+      
+      // Hide app screen initially
+      if (DOM.appScreen) {
+        DOM.appScreen.classList.remove('active');
+        DOM.appScreen.style.display = 'none';
       }
     }, 1500);
     
     // Load state
     loadState();
     
-    // If logged in, show app
+    // If logged in, show app instead
     if (AppState.isLoggedIn) {
       Logger.info('👤 User already logged in');
-      if (DOM.loginScreen) DOM.loginScreen.classList.remove('active');
-      if (DOM.appScreen) DOM.appScreen.classList.add('active');
-      if (DOM.userName) DOM.userName.textContent = AppState.userName.split(' ')[0];
-      
-      setLanguage(AppState.language);
-      renderHistory();
-      updatePhDisplay();
-      updateResilienceScore();
-      updateStatus('online');
+      setTimeout(() => {
+        if (DOM.loginScreen) {
+          DOM.loginScreen.classList.remove('active');
+          DOM.loginScreen.style.display = 'none';
+        }
+        if (DOM.appScreen) {
+          DOM.appScreen.classList.add('active');
+          DOM.appScreen.style.display = 'flex';
+        }
+        if (DOM.userName) DOM.userName.textContent = AppState.userName.split(' ')[0];
+        
+        setLanguage(AppState.language);
+        renderHistory();
+        updatePhDisplay();
+        updateResilienceScore();
+        updateStatus('online');
+        
+        const greeting = LANG_LABELS[AppState.language].greeting;
+        if (DOM.chatContainer) {
+          DOM.chatContainer.innerHTML = '';
+          addMessage('Krishi Sakhi', greeting, false);
+        }
+        
+        Logger.success('✅ App loaded for logged in user');
+      }, 2000);
     } else {
-      Logger.info('👤 User not logged in');
+      // Set default language for login screen
       setLanguage('hi');
     }
     
@@ -1016,8 +1008,7 @@ function init() {
       DOM.logoutBtn.addEventListener('click', logout);
     }
     
-    // Settings
-    if (DOM.settingsBtn) {
+    // Settings    if (DOM.settingsBtn) {
       DOM.settingsBtn.addEventListener('click', () => {
         const lang = getLang();
         const langName = LANG_LABELS[lang].display;
@@ -1276,13 +1267,12 @@ function init() {
     
   } catch (e) {
     Logger.error('💥 Fatal initialization error', { error: e.message, stack: e.stack });
-    // Show error on screen
     document.body.innerHTML = `
-      <div style="padding:20px;text-align:center;font-family:sans-serif;">
-        <h2>⚠️ Something went wrong</h2>
-        <p style="color:#D84315;">${e.message}</p>
+      <div style="padding:20px;text-align:center;font-family:sans-serif;max-width:480px;margin:0 auto;margin-top:50px;">
+        <h2 style="color:#2E7D32;">🌾 Mitti Ki Awaaz</h2>
+        <p style="color:#D84315;margin:20px 0;">⚠️ ${e.message}</p>
         <p style="font-size:12px;color:#666;">Please check the console for details</p>
-        <button onclick="location.reload()" style="padding:10px 20px;margin-top:10px;background:#2E7D32;color:white;border:none;border-radius:8px;cursor:pointer;">Reload</button>
+        <button onclick="location.reload()" style="padding:12px 24px;margin-top:16px;background:#2E7D32;color:white;border:none;border-radius:8px;cursor:pointer;font-size:16px;">Reload</button>
       </div>
     `;
   }
@@ -1292,7 +1282,6 @@ function init() {
 // 🚀 START APP
 // ============================================
 
-// Wait for DOM to be ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', init);
 } else {
@@ -1303,3 +1292,32 @@ console.log('🌾 ==========================================');
 console.log('🌾 MITTI KI AWAAZ - Krishi Sakhi');
 console.log('🌾 Version 1.0.0');
 console.log('🌾 ==========================================');
+console.log('📘 Available commands:');
+console.log('  __app.state        - View current state');
+console.log('  __app.logger       - Access logger');
+console.log('  __app.exportLogs() - Export logs');
+console.log('  __app.clearLogs()  - Clear logs');
+console.log('  __app.reload()     - Reload app state');
+console.log('🌾 ==========================================');
+
+// Expose useful functions globally
+window.__app = {
+  state: AppState,
+  logger: Logger,
+  sendMessage: sendMessage,
+  speakText: speakText,
+  setLanguage: setLanguage,
+  navigateTo: navigateTo,
+  login: login,
+  logout: logout,
+  exportLogs: () => Logger._buffer,
+  clearLogs: () => { Logger._buffer = []; console.clear(); },
+  reload: () => {
+    Logger.info('🔄 Reloading app state');
+    loadState();
+    renderHistory();
+    updatePhDisplay();
+    updateResilienceScore();
+    Logger.success('✅ App reloaded');
+  }
+};
