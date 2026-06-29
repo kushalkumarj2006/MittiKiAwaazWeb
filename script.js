@@ -179,6 +179,13 @@ function setLanguage(lang) {
       } else if (el.tagName === 'LABEL') {
         el.textContent = text;
       } else if (el.tagName === 'BUTTON') {
+        // SKIP ICON BUTTONS - keep their emoji/icons
+        if (el.id === 'micBtn' || el.id === 'sendBtn' || el.id === 'settingsBtn' || el.id === 'logoutBtn') {
+          return;
+        }
+        if (el.classList && (el.classList.contains('mic-btn') || el.classList.contains('send-btn') || el.classList.contains('icon-btn'))) {
+          return;
+        }
         const span = el.querySelector('span');
         if (span && span.dataset[lang]) {
           span.textContent = span.dataset[lang];
@@ -905,10 +912,21 @@ function setupEvents() {
   
   DOM.ackBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-      btn.textContent = '✅ Received';
+      const lang = AppState.language;
+      const ackText = lang === 'hi' ? '✅ मिली' : 
+                      lang === 'kn' ? '✅ ಸ್ವೀಕರಿಸಲಾಗಿದೆ' : 
+                      lang === 'mr' ? '✅ मिळाली' : 
+                      '✅ Received';
+      btn.textContent = ackText;
       btn.disabled = true;
       btn.style.opacity = '0.5';
-      showToast('Alert acknowledged ✅', 'success');
+      showToast(
+        lang === 'hi' ? 'सूचना मिली ✅' :
+        lang === 'kn' ? 'ಎಚ್ಚರಿಕೆ ಸ್ವೀಕರಿಸಲಾಗಿದೆ ✅' :
+        lang === 'mr' ? 'माहिती मिळाली ✅' :
+        'Alert acknowledged ✅',
+        'success'
+      );
     });
   });
   
@@ -978,5 +996,5 @@ document.addEventListener('DOMContentLoaded', init);
 
 console.log('🌾 ==========================================');
 console.log('🌾 MITTI KI AWAAZ - Krishi Sakhi');
-console.log('🌾 Version 2.0.0');
+console.log('🌾 Version 3.0.0');
 console.log('🌾 ==========================================');
