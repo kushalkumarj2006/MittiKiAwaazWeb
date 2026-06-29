@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#2E7D32" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>🌾 Mitti Ki Awaaz</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ==========================================
+  LOADING SCREEN
+  ========================================== -->
+  <div id="loadingScreen" class="screen active">
+    <div class="loading-container">
+      <div class="loading-icon">🌾</div>
+      <div class="loading-spinner"></div>
+      <p class="loading-text" data-en="Mitti Ki Awaaz" data-hi="मिट्टी की आवाज़" data-kn="ಮಣ್ಣಿನ ಧ್ವನಿ" data-mr="मातीचा आवाज">मिट्टी की आवाज़</p>
+      <p class="loading-sub" data-en="Loading Krishi Sakhi..." data-hi="कृषि सखी लोड हो रही है..." data-kn="ಕೃಷಿ ಸಖಿ ಲೋಡ್ ಆಗುತ್ತಿದೆ..." data-mr="कृषी सखी लोड हो रही आहे...">कृषि सखी लोड हो रही है...</p>
+    </div>
+  </div>
+
+  <!-- ==========================================
+  LOGIN SCREEN
+  ========================================== -->
+  <div id="loginScreen" class="screen">
+    <div class="login-card">
+      <div class="login-logo">🌾</div>
+      <h1 class="login-title" data-en="Mitti Ki Awaaz" data-hi="मिट्टी की आवाज़" data-kn="ಮಣ್ಣಿನ ಧ್ವನಿ" data-mr="मातीचा आवाज">मिट्टी की आवाज़</h1>
+      <p class="login-subtitle" data-en="Climate Resilience Companion" data-hi="कृषि और जलवायु लचीलापन साथी" data-kn="ಹವಾಮಾನ ಸ್ಥಿತಿಸ್ಥಾಪಕತ್ವ ಸಾಥಿ" data-mr="हवामान लवचिकता साथी">कृषि और जलवायु लचीलापन साथी</p>
+      
+      <div class="language-selector">
+        <button class="lang-btn active" data-lang="hi">हिंदी</button>
+        <button class="lang-btn" data-lang="kn">ಕನ್ನಡ</button>
+        <button class="lang-btn" data-lang="mr">मराठी</button>
+        <button class="lang-btn" data-lang="en">English</button>
+      </div>
+      
+      <div class="input-group">
+        <label class="input-label" data-en="👤 Farmer's Name" data-hi="👤 किसान का नाम" data-kn="👤 ರೈತರ ಹೆಸರು" data-mr="👤 शेतकऱ्याचे नाव">👤 किसान का नाम</label>
+        <input type="text" id="farmerName" class="input-field" data-en="e.g. Rajesh Kumar" data-hi="जैसे: Rajesh Kumar" data-kn="ಉದಾ: Rajesh Kumar" data-mr="जसे: Rajesh Kumar" placeholder="जैसे: Rajesh Kumar" value="Rajesh Kumar" />
+      </div>
+      
+      <div class="input-group">
+        <label class="input-label" data-en="📱 Phone Number" data-hi="📱 मोबाइल नंबर" data-kn="📱 ಮೊಬೈಲ್ ಸಂಖ್ಯೆ" data-mr="📱 मोबाइल नंबर">📱 मोबाइल नंबर</label>
+        <input type="tel" id="phoneNumber" class="input-field" data-en="10 digits" data-hi="10 अंक" data-kn="10 ಅಂಕೆಗಳು" data-mr="10 अंक" placeholder="10 अंक" value="9876543210" maxlength="10" />
+      </div>
+      
+      <div class="input-group">
+        <label class="input-label" data-en="🔐 Security PIN" data-hi="🔐 4-डिजिट PIN" data-kn="🔐 4-ಅಂಕಿಯ PIN" data-mr="🔐 4-अंकी PIN">🔐 4-डिजिट PIN</label>
+        <input type="password" id="pinCode" class="input-field" placeholder="1234" value="1234" maxlength="4" inputmode="numeric" />
+      </div>
+      
+      <button id="loginBtn" class="primary-btn login-btn" data-en="🌱 Login" data-hi="🌱 प्रवेश करें" data-kn="🌱 ಪ್ರವೇಶಿಸಿ" data-mr="🌱 प्रवेश करा">🌱 प्रवेश करें</button>
+      <p class="login-hint" data-en="Demo PIN: 1234 • Secure & Private" data-hi="Demo PIN: 1234 • सुरक्षित और निजी" data-kn="Demo PIN: 1234 • ಸುರಕ್ಷಿತ ಮತ್ತು ಖಾಸಗಿ" data-mr="Demo PIN: 1234 • सुरक्षित आणि खाजगी">Demo PIN: 1234 • सुरक्षित और निजी</p>
+    </div>
+  </div>
+
+  <!-- ==========================================
+  MAIN APP
+  ========================================== -->
+  <div id="appScreen" class="screen">
+    
+    <!-- ========== TOP HEADER ========== -->
+    <header class="app-header">
+      <div class="header-left">
+        <span class="app-icon">🌾</span>
+        <span id="appTitle" class="app-title" data-en="Mitti Ki Awaaz" data-hi="मिट्टी की आवाज़" data-kn="ಮಣ್ಣಿನ ಧ್ವನಿ" data-mr="मातीचा आवाज">मिट्टी की आवाज़</span>
+      </div>
+      <div class="header-right">
+        <span id="userName" class="user-name">Rajesh</span>
+        <button id="settingsBtn" class="icon-btn" data-en="Settings" data-hi="सेटिंग्स" data-kn="ಸೆಟ್ಟಿಂಗ್ಗಳು" data-mr="सेटिंग्ज" title="Settings">⚙️</button>
+        <button id="logoutBtn" class="icon-btn" data-en="Logout" data-hi="लॉगआउट" data-kn="ಲಾಗ್ಔಟ್" data-mr="लॉगआउट" title="Logout">🚪</button>
+      </div>
+    </header>
+
+    <!-- ========== BOTTOM NAVIGATION ========== -->
+    <nav class="bottom-nav" id="bottomNav">
+      <button class="nav-item active" data-screen="voice">
+        <span class="nav-icon">🎙️</span>
+        <span class="nav-label" data-en="Krishi Sakhi" data-hi="कृषि सखी" data-kn="ಕೃಷಿ ಸಖಿ" data-mr="कृषी सखी">कृषि सखी</span>
+      </button>
+      <button class="nav-item" data-screen="soil">
+        <span class="nav-icon">🧪</span>
+        <span class="nav-label" data-en="Soil Scan" data-hi="मिट्टी जाँच" data-kn="ಮಣ್ಣಿನ ಪರೀಕ್ಷೆ" data-mr="माती परीक्षण">मिट्टी जाँच</span>
+      </button>
+      <button class="nav-item" data-screen="disaster">
+        <span class="nav-icon">🚨</span>
+        <span class="nav-label" data-en="Warnings" data-hi="चेतावनी" data-kn="ಎಚ್ಚರಿಕೆಗಳು" data-mr="इशारे">चेतावनी</span>
+      </button>
+      <button class="nav-item" data-screen="sarpanch">
+        <span class="nav-icon">👑</span>
+        <span class="nav-label" data-en="Sarpanch" data-hi="सरपंच" data-kn="ಸರಪಂಚ" data-mr="सरपंच">सरपंच</span>
+      </button>
+    </nav>
+
+    <!-- ==========================================
+    PAGE: VOICE HOME (Krishi Sakhi)
+    ========================================== -->
+    <div id="voiceScreen" class="page active">
+      <div class="voice-container">
+        
+        <!-- Avatar -->
+        <div class="avatar-container" id="avatarContainer">
+          <div class="avatar-pulse" id="avatarPulse"></div>
+          <div class="avatar">🌾</div>
+          <div class="status-badge" id="statusBadge" data-en="● Online" data-hi="● ऑनलाइन" data-kn="● ಆನ್ಲೈನ್" data-mr="● ऑनलाइन">● ऑनलाइन</div>
+        </div>
+        
+        <!-- Quick Language Select -->
+        <div class="quick-lang">
+          <button class="qlang active" data-lang="hi">हिंदी</button>
+          <button class="qlang" data-lang="kn">ಕನ್ನಡ</button>
+          <button class="qlang" data-lang="mr">मराठी</button>
+          <button class="qlang" data-lang="en">English</button>
+        </div>
+
+        <!-- Chat Messages -->
+        <div class="chat-container" id="chatContainer">
+          <div class="message ai">
+            <div class="msg-avatar">🌾</div>
+            <div class="msg-bubble" data-en="👋 Namaste! I am Krishi Sakhi. How is your field today?" data-hi="👋 नमस्ते! मैं कृषि सखी हूँ। आज आपके खेत का क्या हाल है?" data-kn="👋 ನಮಸ್ತೆ! ನಾನು ಕೃಷಿ ಸಖಿ. ಇಂದು ನಿಮ್ಮ ಹೊಲದ ಸ್ಥಿತಿ ಹೇಗಿದೆ?" data-mr="👋 नमस्कार! मी कृषी सखी आहे. आज तुमच्या शेताची काय परिस्थिती आहे?">👋 नमस्ते! मैं कृषि सखी हूँ। आज आपके खेत का क्या हाल है?</div>
+          </div>
+        </div>
+
+        <!-- Quick Shortcuts -->
+        <div class="shortcuts">
+          <button class="shortcut" data-query-en="Check my soil health" data-query-hi="मेरी मिट्टी जाँचो" data-query-kn="ಮಣ್ಣಿನ ಪರೀಕ್ಷೆ ಮಾಡಿ" data-query-mr="माती परीक्षण करा" data-query="मेरी मिट्टी जाँचो">🧪 <span data-en="Soil Test" data-hi="मिट्टी जाँच" data-kn="ಮಣ್ಣು ಪರೀಕ್ಷೆ" data-mr="माती तपासणी">मिट्टी जाँच</span></button>
+          <button class="shortcut" data-query-en="Show weather forecast" data-query-hi="मौसम की जानकारी दो" data-query-kn="ಹವಾಮಾನ ಮುನ್ಸೂಚನೆ ತೋರಿಸಿ" data-query-mr="हवामान अंदाज दाखवा" data-query="मौसम की जानकारी दो">🌤️ <span data-en="Weather" data-hi="मौसम" data-kn="ಹವಾಮಾನ" data-mr="हवामान">मौसम</span></button>
+          <button class="shortcut" data-query-en="PM-KISAN eligibility" data-query-hi="पीएम-किसान पात्रता" data-query-kn="ಪಿಎಂ-ಕಿಸಾನ್ ಅರ್ಹತೆ" data-query-mr="पीएम-किसान पात्रता" data-query="पीएम-किसान पात्रता">📋 <span data-en="PM-KISAN" data-hi="PM-KISAN" data-kn="PM-KISAN" data-mr="PM-KISAN">PM-KISAN</span></button>
+          <button class="shortcut" data-query-en="Subsidy application form" data-query-hi="सब्सिडी फॉर्म" data-query-kn="ಸಬ್ಸಿಡಿ ಅರ್ಜಿ" data-query-mr="अनुदान अर्ज" data-query="सब्सिडी फॉर्म">📝 <span data-en="Subsidy" data-hi="सब्सिडी" data-kn="ಸಬ್ಸಿಡಿ" data-mr="अनुदान">सब्सिडी</span></button>
+          <button class="shortcut" data-query-en="What is groundnut price?" data-query-hi="मूंगफली का भाव क्या है?" data-query-kn="ಶೇಂಗಾ ಬೆಲೆ ಎಷ್ಟು?" data-query-mr="भुईमूग भाव काय आहे?" data-query="मूंगफली का भाव क्या है?">💰 <span data-en="Price" data-hi="भाव" data-kn="ಬೆಲೆ" data-mr="भाव">भाव</span></button>
+          <button class="shortcut" data-query-en="Advice for mustard crop" data-query-hi="सरसों की फसल के लिए सलाह" data-query-kn="ಸಾಸಿವೆ ಬೆಳೆಗೆ ಸಲಹೆ" data-query-mr="मोहरी पिकासाठी सल्ला" data-query="सरसों की फसल के लिए सलाह">🌱 <span data-en="Crop Advice" data-hi="फसल सलाह" data-kn="ಬೆಳೆ ಸಲಹೆ" data-mr="पीक सल्ला">फसल सलाह</span></button>
+        </div>
+
+        <!-- Input Area -->
+        <div class="input-area">
+          <button id="micBtn" class="mic-btn" data-en="Voice Input" data-hi="वॉयस इनपुट" data-kn="ಧ್ವನಿ ಇನ್ಪುಟ್" data-mr="व्हॉइस इनपुट" title="Voice Input">🎤</button>
+          <input type="text" id="chatInput" class="chat-input" data-en="Type or speak..." data-hi="यहाँ लिखें या बोलें..." data-kn="ಟೈಪ್ ಮಾಡಿ ಅಥವಾ ಮಾತನಾಡಿ..." data-mr="येथे लिहा किंवा बोला..." placeholder="यहाँ लिखें या बोलें..." autocomplete="off" />
+          <button id="sendBtn" class="send-btn" data-en="Send" data-hi="भेजें" data-kn="ಕಳುಹಿಸು" data-mr="पाठवा" title="Send">➤</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+    PAGE: SOIL SCAN
+    ========================================== -->
+    <div id="soilScreen" class="page">
+      <div class="soil-container">
+        <div class="page-header">
+          <h2 data-en="🧪 Soil Health Test" data-hi="🧪 मिट्टी स्वास्थ्य परीक्षण" data-kn="🧪 ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಪರೀಕ್ಷೆ" data-mr="🧪 माती आरोग्य चाचणी">🧪 मिट्टी स्वास्थ्य परीक्षण</h2>
+          <p class="page-subtitle" data-en="Know your soil health" data-hi="अपनी मिट्टी की सेहत जानें" data-kn="ನಿಮ್ಮ ಮಣ್ಣಿನ ಆರೋಗ್ಯ ತಿಳಿಯಿರಿ" data-mr="तुमच्या मातीची तब्येत जाणून घ्या">अपनी मिट्टी की सेहत जानें</p>
+        </div>
+        
+        <!-- pH Selector -->
+        <div class="ph-selector">
+          <label class="ph-label" data-en="📊 Select pH Value" data-hi="📊 पीएच मान चुनें" data-kn="📊 pH ಮೌಲ್ಯ ಆಯ್ಕೆಮಾಡಿ" data-mr="📊 pH मूल्य निवडा">📊 पीएच मान चुनें</label>
+          <div class="ph-chips" id="phChips">
+            <button class="ph-chip" data-ph="4.0">4.0</button>
+            <button class="ph-chip" data-ph="5.0">5.0</button>
+            <button class="ph-chip active" data-ph="5.8">5.8</button>
+            <button class="ph-chip" data-ph="6.5">6.5</button>
+            <button class="ph-chip" data-ph="7.2">7.2</button>
+            <button class="ph-chip" data-ph="8.0">8.0</button>
+            <button class="ph-chip" data-ph="9.0">9.0</button>
+          </div>
+          <div class="ph-display" id="phDisplay">
+            <span class="ph-value" id="phValue">5.8</span>
+            <span class="ph-label" id="phLabel" data-en="Moderately Acidic" data-hi="मध्यम अम्लीय" data-kn="ಮಧ್ಯಮ ಆಮ್ಲೀಯ" data-mr="मध्यम आम्लयुक्त">मध्यम अम्लीय</span>
+          </div>
+        </div>
+
+        <!-- Nutrients -->
+        <div class="nutrients">
+          <div class="nutrient low">
+            <span class="nutrient-icon">🧪</span>
+            <strong>N</strong>
+            <small data-en="LOW" data-hi="कम" data-kn="ಕಡಿಮೆ" data-mr="कमी">कम</small>
+          </div>
+          <div class="nutrient medium">
+            <span class="nutrient-icon">🧪</span>
+            <strong>P</strong>
+            <small data-en="MEDIUM" data-hi="मध्यम" data-kn="ಮಧ್ಯಮ" data-mr="मध्यम">मध्यम</small>
+          </div>
+          <div class="nutrient high">
+            <span class="nutrient-icon">🧪</span>
+            <strong>K</strong>
+            <small data-en="HIGH" data-hi="उच्च" data-kn="ಹೆಚ್ಚು" data-mr="उच्च">उच्च</small>
+          </div>
+        </div>
+
+        <!-- Analyze Button -->
+        <button id="analyzeBtn" class="primary-btn analyze-btn" data-en="🔬 Analyze Soil" data-hi="🔬 मिट्टी विश्लेषण करें" data-kn="🔬 ಮಣ್ಣು ವಿಶ್ಲೇಷಿಸಿ" data-mr="🔬 माती विश्लेषण करा">🔬 मिट्टी विश्लेषण करें</button>
+
+        <!-- Result -->
+        <div id="soilResult" class="result-card" style="display:none;">
+          <div class="result-header">
+            <span data-en="✨ Gemini AI Advice" data-hi="✨ Gemini AI सलाह" data-kn="✨ Gemini AI ಸಲಹೆ" data-mr="✨ Gemini AI सल्ला">✨ Gemini AI सलाह</span>
+            <button id="speakResultBtn" class="icon-btn" data-en="Listen" data-hi="सुनें" data-kn="ಕೇಳು" data-mr="ऐका" title="Listen">🔊</button>
+          </div>
+          <div id="soilResultText" class="result-text" data-en="Loading..." data-hi="लोड हो रहा है..." data-kn="ಲೋಡ್ ಆಗುತ್ತಿದೆ..." data-mr="लोड होत आहे...">लोड हो रहा है...</div>
+        </div>
+
+        <!-- History -->
+        <div id="soilHistory" class="soil-history">
+          <h3 data-en="📜 History" data-hi="📜 पुराना रिकॉर्ड" data-kn="📜 ಇತಿಹಾಸ" data-mr="📜 जुना रेकॉर्ड">📜 पुराना रिकॉर्ड</h3>
+          <div id="historyList" class="history-list">
+            <div class="history-empty" data-en="No records yet" data-hi="अभी कोई रिकॉर्ड नहीं" data-kn="ಇನ್ನೂ ಯಾವುದೇ ದಾಖಲೆಗಳಿಲ್ಲ" data-mr="अद्याप कोणतेही रेकॉर्ड नाहीत">अभी कोई रिकॉर्ड नहीं</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+    PAGE: DISASTER ALERTS
+    ========================================== -->
+    <div id="disasterScreen" class="page">
+      <div class="disaster-container">
+        <div class="page-header">
+          <h2 data-en="🚨 Disaster Alerts" data-hi="🚨 आपदा चेतावनी" data-kn="🚨 ವಿಪತ್ತು ಎಚ್ಚರಿಕೆಗಳು" data-mr="🚨 आपत्ती इशारे">🚨 आपदा चेतावनी</h2>
+          <p class="page-subtitle" data-en="Real-time alerts from IMD" data-hi="IMD से रीयल-टाइम अलर्ट" data-kn="IMD ನಿಂದ ನೈಜ-ಸಮಯದ ಎಚ್ಚರಿಕೆಗಳು" data-mr="IMD कडून रिअल-टाइम इशारे">IMD से रीयल-टाइम अलर्ट</p>
+        </div>
+        
+        <!-- Critical Alert -->
+        <div id="criticalAlert" class="alert-card critical">
+          <div class="alert-header">
+            <div class="alert-icon">🚨</div>
+            <div>
+              <span class="alert-title" data-en="Flood Alert" data-hi="बाढ़ की चेतावनी" data-kn="ಪ್ರವಾಹ ಎಚ್ಚರಿಕೆ" data-mr="पुराचा इशारा">बाढ़ की चेतावनी</span>
+              <span class="badge critical" data-en="CRITICAL" data-hi="गंभीर" data-kn="ಗಂಭೀರ" data-mr="गंभीर">गंभीर</span>
+            </div>
+          </div>
+          <p class="alert-message" data-en="IMD alerts heavy rainfall exceeding 120mm in next 48 hours. Flood warning issued for low-lying areas of River Gandak. Secure livestock and relocate pumps." data-hi="IMD ने अगले 48 घंटों में 120mm से अधिक बारिश की चेतावनी दी है। गंडक नदी के निचले इलाकों के लिए बाढ़ की चेतावनी जारी। मवेशियों को सुरक्षित रखें और पंप हटाएं।" data-kn="IMD ಮುಂದಿನ 48 ಗಂಟೆಗಳಲ್ಲಿ 120mm ಮೀರಿ ಭಾರಿ ಮಳೆಯ ಎಚ್ಚರಿಕೆ ನೀಡಿದೆ. ಗಂಡಕ್ ನದಿಯ ತಗ್ಗು ಪ್ರದೇಶಗಳಿಗೆ ಪ್ರವಾಹದ ಎಚ್ಚರಿಕೆ ನೀಡಲಾಗಿದೆ. ಜಾನುವಾರುಗಳನ್ನು ಸುರಕ್ಷಿತವಾಗಿರಿಸಿ ಮತ್ತು ಪಂಪ್‌ಗಳನ್ನು ಸ್ಥಳಾಂತರಿಸಿ." data-mr="IMD ने पुढील 48 तासांत 120mm पेक्षा जास्त पावसाचा इशारा दिला आहे. गंडक नदीच्या सखल भागात पुराचा इशारा जारी. पशुधन सुरक्षित करा आणि पंप हलवा.">IMD ने अगले 48 घंटों में 120mm से अधिक बारिश की चेतावनी दी है। गंडक नदी के निचले इलाकों के लिए बाढ़ की चेतावनी जारी। मवेशियों को सुरक्षित रखें और पंप हटाएं।</p>
+          <div class="alert-actions">
+            <button class="ack-btn" data-alert="critical" data-en="✅ Acknowledge" data-hi="✅ सूचना मिली" data-kn="✅ ತಿಳಿಸು" data-mr="✅ माहिती मिळाली">✅ सूचना मिली</button>
+            <button class="speak-alert-btn" data-alert="critical" data-en="🔊 Listen" data-hi="🔊 सुनें" data-kn="🔊 ಕೇಳು" data-mr="🔊 ऐका">🔊 सुनें</button>
+          </div>
+        </div>
+        
+        <!-- Warning Alert -->
+        <div id="warningAlert" class="alert-card warning">
+          <div class="alert-header">
+            <div class="alert-icon">🌡️</div>
+            <div>
+              <span class="alert-title" data-en="Heat Wave Warning" data-hi="लू की चेतावनी" data-kn="ಬಿಸಿಗಾಳಿ ಎಚ್ಚರಿಕೆ" data-mr="उष्णतेच्या लाटेचा इशारा">लू की चेतावनी</span>
+              <span class="badge warning" data-en="WARNING" data-hi="चेतावनी" data-kn="ಎಚ್ಚರಿಕೆ" data-mr="इशारा">चेतावनी</span>
+            </div>
+          </div>
+          <p class="alert-message" data-en="Temperatures likely to reach 45°C this week. Ensure frequent light irrigation for standing vegetable crops in evening hours." data-hi="इस सप्ताह तापमान 45°C तक पहुँच सकता है। शाम के समय खड़ी सब्जी फसलों के लिए बार-बार हल्की सिंचाई करें।" data-kn="ಈ ವಾರ ತಾಪಮಾನ 45°C ತಲುಪುವ ಸಾಧ್ಯತೆಯಿದೆ. ಸಂಜೆಯ ಸಮಯದಲ್ಲಿ ತರಕಾರಿ ಬೆಳೆಗಳಿಗೆ ಆಗಾಗ್ಗೆ ಲಘು ನೀರಾವರಿ ಒದಗಿಸಿ." data-mr="या आठवड्यात तापमान 45°C पर्यंत पोहोचण्याची शक्यता आहे. संध्याकाळी उभ्या भाजीपाला पिकांना वारंवार हलके पाणी द्यावे.">इस सप्ताह तापमान 45°C तक पहुँच सकता है। शाम के समय खड़ी सब्जी फसलों के लिए बार-बार हल्की सिंचाई करें।</p>
+          <div class="alert-actions">
+            <button class="ack-btn" data-alert="warning" data-en="✅ Acknowledge" data-hi="✅ सूचना मिली" data-kn="✅ ತಿಳಿಸು" data-mr="✅ माहिती मिळाली">✅ सूचना मिली</button>
+            <button class="speak-alert-btn" data-alert="warning" data-en="🔊 Listen" data-hi="🔊 सुनें" data-kn="🔊 ಕೇಳು" data-mr="🔊 ऐका">🔊 सुनें</button>
+          </div>
+        </div>
+
+        <!-- Info Alert -->
+        <div id="infoAlert" class="alert-card info">
+          <div class="alert-header">
+            <div class="alert-icon">ℹ️</div>
+            <div>
+              <span class="alert-title" data-en="Normal Weather" data-hi="सामान्य मौसम" data-kn="ಸಾಮಾನ್ಯ ಹವಾಮಾನ" data-mr="सामान्य हवामान">सामान्य मौसम</span>
+              <span class="badge info" data-en="INFO" data-hi="सूचना" data-kn="ಮಾಹಿತಿ" data-mr="माहिती">सूचना</span>
+            </div>
+          </div>
+          <p class="alert-message" data-en="Normal weather expected for next 3 days. Favorable conditions for agricultural operations." data-hi="अगले 3 दिनों में मौसम सामान्य रहेगा। कृषि कार्यों के लिए अनुकूल मौसम है।" data-kn="ಮುಂದಿನ 3 ದಿನಗಳು ಸಾಮಾನ್ಯ ಹವಾಮಾನ ನಿರೀಕ್ಷಿಸಲಾಗಿದೆ. ಕೃಷಿ ಚಟುವಟಿಕೆಗಳಿಗೆ ಅನುಕೂಲಕರ ಪರಿಸ್ಥಿತಿಗಳು." data-mr="पुढील 3 दिवस हवामान सामान्य राहील. कृषी कार्यांसाठी अनुकूल परिस्थिती.">अगले 3 दिनों में मौसम सामान्य रहेगा। कृषि कार्यों के लिए अनुकूल मौसम है।</p>
+          <div class="alert-actions">
+            <button class="ack-btn" data-alert="info" data-en="✅ Acknowledge" data-hi="✅ सूचना मिली" data-kn="✅ ತಿಳಿಸು" data-mr="✅ माहिती मिळाली">✅ सूचना मिली</button>
+          </div>
+        </div>
+
+        <!-- Safety Checklists -->
+        <div class="checklist-section">
+          <h3 data-en="🛡️ Safety Checklist" data-hi="🛡️ सुरक्षा चेकलिस्ट" data-kn="🛡️ ಸುರಕ್ಷತಾ ಪರಿಶೀಲನಾಪಟ್ಟಿ" data-mr="🛡️ सुरक्षा तपासणी यादी">🛡️ सुरक्षा चेकलिस्ट</h3>
+          <div class="checklist-grid">
+            <button class="checklist-btn" data-checklist="livestock">
+              🐮 <span data-en="Save Livestock" data-hi="मवेशी बचाएं" data-kn="ಜಾನುವಾರು ಉಳಿಸಿ" data-mr="पशुधन वाचवा">मवेशी बचाएं</span>
+            </button>
+            <button class="checklist-btn" data-checklist="crops">
+              🌾 <span data-en="Protect Crops" data-hi="फसल बचाएं" data-kn="ಬೆಳೆ ರಕ್ಷಿಸಿ" data-mr="पीक वाचवा">फसल बचाएं</span>
+            </button>
+            <button class="checklist-btn" data-checklist="evacuation">
+              🏠 <span data-en="Evacuation" data-hi="स्थानांतरण" data-kn="ಸ್ಥಳಾಂತರ" data-mr="स्थलांतरण">स्थानांतरण</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Checklist Display -->
+        <div id="checklistDisplay" class="checklist-display" style="display:none;">
+          <div class="checklist-header">
+            <span id="checklistTitle" data-en="📋 Checklist" data-hi="📋 चेकलिस्ट" data-kn="📋 ಪರಿಶೀಲನಾಪಟ್ಟಿ" data-mr="📋 तपासणी यादी">📋 चेकलिस्ट</span>
+            <button id="closeChecklist" class="icon-btn">✕</button>
+          </div>
+          <div id="checklistContent" class="checklist-content"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+    PAGE: SARPANCH DASHBOARD
+    ========================================== -->
+    <div id="sarpanchScreen" class="page">
+      <div class="sarpanch-container">
+        <div class="page-header">
+          <h2 data-en="👑 Sarpanch Dashboard" data-hi="👑 सरपंच डैशबोर्ड" data-kn="👑 ಸರಪಂಚ ಡ್ಯಾಶ್ಬೋರ್ಡ್" data-mr="👑 सरपंच डॅशबोर्ड">👑 सरपंच डैशबोर्ड</h2>
+          <p class="page-subtitle" data-en="Village Development & Scheme Coordinator" data-hi="ग्राम विकास और योजना समन्वयक" data-kn="ಗ್ರಾಮ ಅಭಿವೃದ್ಧಿ ಮತ್ತು ಯೋಜನೆ ಸಂಯೋಜಕ" data-mr="गाव विकास आणि योजना समन्वयक">ग्राम विकास और योजना समन्वयक</p>
+        </div>
+        
+        <!-- Resilience Score -->
+        <div class="resilience-score">
+          <div class="score-circle" id="scoreCircle">
+            <span id="scoreValue">72</span>
+          </div>
+          <span class="score-label" data-en="Village Resilience Score" data-hi="ग्राम अनुकूलता स्कोर" data-kn="ಗ್ರಾಮದ ಸ್ಥಿತಿಸ್ಥಾಪಕತ್ವ ಸ್ಕೋರ್" data-mr="गाव लवचिकता धावसंख्या">ग्राम अनुकूलता स्कोर</span>
+        </div>
+
+        <!-- Community Hotspots -->
+        <div class="hotspots">
+          <h3 data-en="📍 Community Hotspots" data-hi="📍 सामुदायिक हॉटस्पॉट" data-kn="📍 ಸಮುದಾಯ ಹಾಟ್ಸ್ಪಾಟ್ಗಳು" data-mr="📍 सामुदायिक हॉटस्पॉट">📍 सामुदायिक हॉटस्पॉट</h3>
+          
+          <div class="hotspot-item critical">
+            <span class="hotspot-icon">⚠️</span>
+            <div>
+              <strong data-en="Soil Acidity" data-hi="मिट्टी अम्लता" data-kn="ಮಣ್ಣಿನ ಆಮ್ಲೀಯತೆ" data-mr="माती आम्लता">मिट्टी अम्लता</strong>
+              <p data-en="12 farms pH below 5.5 - Lime distribution needed" data-hi="12 खेतों का पीएच 5.5 से कम - चूना वितरण आवश्यक" data-kn="12 ಜಮೀನುಗಳ pH 5.5 ಕ್ಕಿಂತ ಕಡಿಮೆ - ಸುಣ್ಣ ವಿತರಣೆ ಅಗತ್ಯ" data-mr="12 शेतांचा pH 5.5 पेक्षा कमी - चुना वाटप आवश्यक">12 खेतों का पीएच 5.5 से कम - चूना वितरण आवश्यक</p>
+            </div>
+            <span class="hotspot-badge critical" data-en="CRITICAL" data-hi="गंभीर" data-kn="ಗಂಭೀರ" data-mr="गंभीर">गंभीर</span>
+          </div>
+          
+          <div class="hotspot-item warning">
+            <span class="hotspot-icon">💧</span>
+            <div>
+              <strong data-en="Groundwater Level" data-hi="भूजल स्तर" data-kn="ಅಂತರ್ಜಲ ಮಟ್ಟ" data-mr="भूजल पातळी">भूजल स्तर</strong>
+              <p data-en="Down by 1.8 meters since last monsoon" data-hi="पिछले मानसून से 1.8 मीटर नीचे" data-kn="ಕಳೆದ ಮಳೆಗಾಲದಿಂದ 1.8 ಮೀಟರ್ ಕುಸಿದಿದೆ" data-mr="मागील पावसाळ्यापासून 1.8 मीटर खाली">पिछले मानसून से 1.8 मीटर नीचे</p>
+            </div>
+            <span class="hotspot-badge warning" data-en="WARNING" data-hi="चेतावनी" data-kn="ಎಚ್ಚರಿಕೆ" data-mr="इशारा">चेतावनी</span>
+          </div>
+          
+          <div class="hotspot-item success">
+            <span class="hotspot-icon">♻️</span>
+            <div>
+              <strong data-en="Compost Sites" data-hi="कम्पोस्ट साइटें" data-kn="ಕಂಪೋಸ್ಟ್ ಸೈಟ್ಗಳು" data-mr="कंपोस्ट साइट्स">कम्पोस्ट साइटें</strong>
+              <p data-en="8 sites fully utilized - Swachh Bharat" data-hi="8 साइटें पूर्ण उपयोग में - स्वच्छ भारत" data-kn="8 ಸೈಟ್ಗಳು ಪೂರ್ಣ ಬಳಕೆಯಲ್ಲಿವೆ - ಸ್ವಚ್ಛ ಭಾರತ" data-mr="8 साइट्स पूर्ण वापरात - स्वच्छ भारत">8 साइटें पूर्ण उपयोग में - स्वच्छ भारत</p>
+            </div>
+            <span class="hotspot-badge success" data-en="OPTIMAL" data-hi="सर्वोत्तम" data-kn="ಉತ್ತಮ" data-mr="सर्वोत्तम">सर्वोत्तम</span>
+          </div>
+        </div>
+
+        <!-- Scheme Recommendation -->
+        <div class="scheme-card">
+          <div class="scheme-icon">💡</div>
+          <div>
+            <h4 data-en="Recommended Scheme" data-hi="अनुशंसित योजना" data-kn="ಶಿಫಾರಸು ಮಾಡಲಾದ ಯೋಜನೆ" data-mr="शिफारस केलेली योजना">अनुशंसित योजना</h4>
+            <p class="scheme-name" data-en="Agricultural Lime Subsidy Scheme" data-hi="कृषि चूना सब्सिडी योजना" data-kn="ಕೃಷಿ ಸುಣ್ಣ ಸಬ್ಸಿಡಿ ಯೋಜನೆ" data-mr="कृषी चुना अनुदान योजना">कृषि चूना सब्सिडी योजना</p>
+            <p class="scheme-detail" data-en="12 Farmers • ₹2,40,000 Subsidy" data-hi="12 किसान • ₹2,40,000 सब्सिडी" data-kn="12 ರೈತರು • ₹2,40,000 ಸಬ್ಸಿಡಿ" data-mr="12 शेतकरी • ₹2,40,000 अनुदान">12 किसान • ₹2,40,000 सब्सिडी</p>
+            <button id="generateSchemeBtn" class="primary-btn scheme-btn" data-en="📝 Submit Form" data-hi="📝 फॉर्म सबमिट करें" data-kn="📝 ಅರ್ಜಿ ಸಲ್ಲಿಸಿ" data-mr="📝 अर्ज सबमिट करा">📝 फॉर्म सबमिट करें</button>
+          </div>
+        </div>
+
+        <!-- Scheme Applications -->
+        <div id="schemeList" class="scheme-list">
+          <h3 data-en="📁 Active Applications" data-hi="📁 सक्रिय आवेदन" data-kn="📁 ಸಕ್ರಿಯ ಅರ್ಜಿಗಳು" data-mr="📁 सक्रिय अर्ज">📁 सक्रिय आवेदन</h3>
+          <div id="schemeItems" class="scheme-items">
+            <div class="scheme-item">
+              <div>
+                <strong data-en="PM-KISAN Nidhi Yojna" data-hi="PM-KISAN Nidhi Yojna" data-kn="PM-KISAN Nidhi Yojna" data-mr="PM-KISAN Nidhi Yojna">PM-KISAN Nidhi Yojna</strong>
+                <small data-en="42 Farmers • ₹84,000 • Ramnagar Village" data-hi="42 किसान • ₹84,000 • Ramnagar गांव" data-kn="42 ರೈತರು • ₹84,000 • Ramnagar ಗ್ರಾಮ" data-mr="42 शेतकरी • ₹84,000 • Ramnagar गाव">42 किसान • ₹84,000 • Ramnagar गांव</small>
+              </div>
+              <span class="status submitted" data-en="SUBMITTED" data-hi="सबमिट" data-kn="ಸಲ್ಲಿಸಲಾಗಿದೆ" data-mr="सबमिट">सबमिट</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==========================================
+  TOAST NOTIFICATION
+  ========================================== -->
+  <div id="toast" class="toast" style="display:none;">
+    <span id="toastMessage">Notification</span>
+  </div>
+
+  <!-- ==========================================
+  SCRIPTS
+  ========================================== -->
+  <script src="script.js"></script>
+</body>
+</html>
