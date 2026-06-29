@@ -1,17 +1,6 @@
 // ============================================
-// MITTI KI AWAAZ - Complete Working Script
+// MITTI KI AWAAZ - Complete Frontend
 // ============================================
-
-// ============================================
-// SIMPLE LOGGER
-// ============================================
-const Logger = {
-  info: (msg, data) => console.log(`📘 ${msg}`, data || ''),
-  success: (msg, data) => console.log(`✅ ${msg}`, data || ''),
-  error: (msg, data) => console.log(`❌ ${msg}`, data || ''),
-  warning: (msg, data) => console.log(`⚠️ ${msg}`, data || ''),
-  debug: (msg, data) => console.log(`🔍 ${msg}`, data || '')
-};
 
 // ============================================
 // STATE
@@ -21,6 +10,8 @@ const AppState = {
   isLoggedIn: false,
   userName: 'Rajesh Kumar',
   phone: '9876543210',
+  pin: '1234',
+  location: 'Ramnagar, Karnataka',
   currentScreen: 'voice',
   ph: 5.8,
   soilHistory: [],
@@ -30,54 +21,164 @@ const AppState = {
 };
 
 // ============================================
-// DOM HELPERS
-// ============================================
-function $(id) { return document.getElementById(id); }
-function $$(sel) { return document.querySelectorAll(sel); }
-
-// ============================================
-// LANGUAGE DATA
+// LANGUAGE DATA - FULL
 // ============================================
 const LANG = {
   hi: {
+    name: 'हिंदी',
     code: 'hi-IN',
+    display: 'Hindi',
     greeting: '👋 नमस्ते! मैं कृषि सखी हूँ। आज आपके खेत का क्या हाल है?',
     online: '● ऑनलाइन',
     listening: '🎤 सुन रहा हूँ...',
     speaking: '🔊 बोल रहा हूँ...',
     thinking: '⏳ सोच रहा हूँ...',
-    error: 'क्षमा करें, कुछ गड़बड़ हो गई। कृपया फिर से प्रयास करें।'
+    error: 'क्षमा करें, कुछ गड़बड़ हो गई। कृपया फिर से प्रयास करें।',
+    loginTitle: 'प्रवेश करें',
+    loginSubtitle: 'कृषि और जलवायु लचीलापन साथी',
+    farmerName: 'किसान का नाम',
+    phoneNumber: 'मोबाइल नंबर',
+    pinCode: '4-डिजिट PIN',
+    loginHint: 'Demo PIN: 1234 • सुरक्षित और निजी',
+    settings: 'सेटिंग्स',
+    logout: 'लॉगआउट',
+    soilTitle: '🧪 मिट्टी स्वास्थ्य परीक्षण',
+    soilSubtitle: 'अपनी मिट्टी की सेहत जानें',
+    selectPh: '📊 पीएच मान चुनें',
+    analyze: '🔬 मिट्टी विश्लेषण करें',
+    history: '📜 पुराना रिकॉर्ड',
+    noHistory: 'अभी कोई रिकॉर्ड नहीं',
+    disasterTitle: '🚨 आपदा चेतावनी',
+    disasterSubtitle: 'IMD से रीयल-टाइम अलर्ट',
+    acknowledge: '✅ सूचना मिली',
+    checklist: '🛡️ सुरक्षा चेकलिस्ट',
+    sarpanchTitle: '👑 सरपंच डैशबोर्ड',
+    sarpanchSubtitle: 'ग्राम विकास और योजना समन्वयक',
+    resilienceScore: 'ग्राम अनुकूलता स्कोर',
+    hotspots: '📍 सामुदायिक हॉटस्पॉट',
+    recommendedScheme: 'अनुशंसित योजना',
+    submitForm: '📝 फॉर्म सबमिट करें',
+    activeApplications: '📁 सक्रिय आवेदन',
+    submitted: 'सबमिट'
   },
   kn: {
+    name: 'ಕನ್ನಡ',
     code: 'kn-IN',
+    display: 'Kannada',
     greeting: '👋 ನಮಸ್ತೆ! ನಾನು ಕೃಷಿ ಸಖಿ. ಇಂದು ನಿಮ್ಮ ಹೊಲದ ಸ್ಥಿತಿ ಹೇಗಿದೆ?',
     online: '● ಆನ್ಲೈನ್',
     listening: '🎤 ಕೇಳುತ್ತಿದ್ದೇನೆ...',
     speaking: '🔊 ಮಾತನಾಡುತ್ತಿದ್ದೇನೆ...',
     thinking: '⏳ ಯೋಚಿಸುತ್ತಿದ್ದೇನೆ...',
-    error: 'ಕ್ಷಮಿಸಿ, ಏನೋ ತಪ್ಪಾಗಿದೆ. ದಯವಿಟ್ಟು ಮತ್ತೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ.'
+    error: 'ಕ್ಷಮಿಸಿ, ಏನೋ ತಪ್ಪಾಗಿದೆ. ದಯವಿಟ್ಟು ಮತ್ತೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ.',
+    loginTitle: 'ಪ್ರವೇಶಿಸಿ',
+    loginSubtitle: 'ಹವಾಮಾನ ಸ್ಥಿತಿಸ್ಥಾಪಕತ್ವ ಸಾಥಿ',
+    farmerName: 'ರೈತರ ಹೆಸರು',
+    phoneNumber: 'ಮೊಬೈಲ್ ಸಂಖ್ಯೆ',
+    pinCode: '4-ಅಂಕಿಯ PIN',
+    loginHint: 'Demo PIN: 1234 • ಸುರಕ್ಷಿತ ಮತ್ತು ಖಾಸಗಿ',
+    settings: 'ಸೆಟ್ಟಿಂಗ್ಗಳು',
+    logout: 'ಲಾಗ್ಔಟ್',
+    soilTitle: '🧪 ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಪರೀಕ್ಷೆ',
+    soilSubtitle: 'ನಿಮ್ಮ ಮಣ್ಣಿನ ಆರೋಗ್ಯ ತಿಳಿಯಿರಿ',
+    selectPh: '📊 pH ಮೌಲ್ಯ ಆಯ್ಕೆಮಾಡಿ',
+    analyze: '🔬 ಮಣ್ಣು ವಿಶ್ಲೇಷಿಸಿ',
+    history: '📜 ಇತಿಹಾಸ',
+    noHistory: 'ಇನ್ನೂ ಯಾವುದೇ ದಾಖಲೆಗಳಿಲ್ಲ',
+    disasterTitle: '🚨 ವಿಪತ್ತು ಎಚ್ಚರಿಕೆಗಳು',
+    disasterSubtitle: 'IMD ನಿಂದ ನೈಜ-ಸಮಯದ ಎಚ್ಚರಿಕೆಗಳು',
+    acknowledge: '✅ ತಿಳಿಸು',
+    checklist: '🛡️ ಸುರಕ್ಷತಾ ಪರಿಶೀಲನಾಪಟ್ಟಿ',
+    sarpanchTitle: '👑 ಸರಪಂಚ ಡ್ಯಾಶ್ಬೋರ್ಡ್',
+    sarpanchSubtitle: 'ಗ್ರಾಮ ಅಭಿವೃದ್ಧಿ ಮತ್ತು ಯೋಜನೆ ಸಂಯೋಜಕ',
+    resilienceScore: 'ಗ್ರಾಮದ ಸ್ಥಿತಿಸ್ಥಾಪಕತ್ವ ಸ್ಕೋರ್',
+    hotspots: '📍 ಸಮುದಾಯ ಹಾಟ್ಸ್ಪಾಟ್ಗಳು',
+    recommendedScheme: 'ಶಿಫಾರಸು ಮಾಡಲಾದ ಯೋಜನೆ',
+    submitForm: '📝 ಅರ್ಜಿ ಸಲ್ಲಿಸಿ',
+    activeApplications: '📁 ಸಕ್ರಿಯ ಅರ್ಜಿಗಳು',
+    submitted: 'ಸಲ್ಲಿಸಲಾಗಿದೆ'
   },
   mr: {
+    name: 'मराठी',
     code: 'mr-IN',
+    display: 'Marathi',
     greeting: '👋 नमस्कार! मी कृषी सखी आहे. आज तुमच्या शेताची काय परिस्थिती आहे?',
     online: '● ऑनलाइन',
     listening: '🎤 ऐकत आहे...',
     speaking: '🔊 बोलत आहे...',
     thinking: '⏳ विचार करत आहे...',
-    error: 'क्षमस्व, काहीतरी चूक झाली. कृपया पुन्हा प्रयत्न करा.'
+    error: 'क्षमस्व, काहीतरी चूक झाली. कृपया पुन्हा प्रयत्न करा.',
+    loginTitle: 'प्रवेश करा',
+    loginSubtitle: 'हवामान लवचिकता साथी',
+    farmerName: 'शेतकऱ्याचे नाव',
+    phoneNumber: 'मोबाइल नंबर',
+    pinCode: '4-अंकी PIN',
+    loginHint: 'Demo PIN: 1234 • सुरक्षित आणि खाजगी',
+    settings: 'सेटिंग्ज',
+    logout: 'लॉगआउट',
+    soilTitle: '🧪 माती आरोग्य चाचणी',
+    soilSubtitle: 'तुमच्या मातीची तब्येत जाणून घ्या',
+    selectPh: '📊 pH मूल्य निवडा',
+    analyze: '🔬 माती विश्लेषण करा',
+    history: '📜 जुना रेकॉर्ड',
+    noHistory: 'अद्याप कोणतेही रेकॉर्ड नाहीत',
+    disasterTitle: '🚨 आपत्ती इशारे',
+    disasterSubtitle: 'IMD कडून रिअल-टाइम इशारे',
+    acknowledge: '✅ माहिती मिळाली',
+    checklist: '🛡️ सुरक्षा तपासणी यादी',
+    sarpanchTitle: '👑 सरपंच डॅशबोर्ड',
+    sarpanchSubtitle: 'गाव विकास आणि योजना समन्वयक',
+    resilienceScore: 'गाव लवचिकता धावसंख्या',
+    hotspots: '📍 सामुदायिक हॉटस्पॉट',
+    recommendedScheme: 'शिफारस केलेली योजना',
+    submitForm: '📝 अर्ज सबमिट करा',
+    activeApplications: '📁 सक्रिय अर्ज',
+    submitted: 'सबमिट'
   },
   en: {
+    name: 'English',
     code: 'en-US',
+    display: 'English',
     greeting: '👋 Namaste! I am Krishi Sakhi. How is your field today?',
     online: '● Online',
     listening: '🎤 Listening...',
     speaking: '🔊 Speaking...',
     thinking: '⏳ Thinking...',
-    error: 'Sorry, something went wrong. Please try again.'
+    error: 'Sorry, something went wrong. Please try again.',
+    loginTitle: 'Login',
+    loginSubtitle: 'Climate Resilience Companion',
+    farmerName: "Farmer's Name",
+    phoneNumber: 'Phone Number',
+    pinCode: '4-Digit PIN',
+    loginHint: 'Demo PIN: 1234 • Secure & Private',
+    settings: 'Settings',
+    logout: 'Logout',
+    soilTitle: '🧪 Soil Health Test',
+    soilSubtitle: 'Know your soil health',
+    selectPh: '📊 Select pH Value',
+    analyze: '🔬 Analyze Soil',
+    history: '📜 History',
+    noHistory: 'No records yet',
+    disasterTitle: '🚨 Disaster Alerts',
+    disasterSubtitle: 'Real-time alerts from IMD',
+    acknowledge: '✅ Acknowledge',
+    checklist: '🛡️ Safety Checklist',
+    sarpanchTitle: '👑 Sarpanch Dashboard',
+    sarpanchSubtitle: 'Village Development & Scheme Coordinator',
+    resilienceScore: 'Village Resilience Score',
+    hotspots: '📍 Community Hotspots',
+    recommendedScheme: 'Recommended Scheme',
+    submitForm: '📝 Submit Form',
+    activeApplications: '📁 Active Applications',
+    submitted: 'SUBMITTED'
   }
 };
 
-function getLang() { return AppState.language || 'hi'; }
+// ============================================
+// DOM HELPERS
+// ============================================
+function $(id) { return document.getElementById(id); }
+function $$(sel) { return document.querySelectorAll(sel); }
 
 // ============================================
 // DOM REFS
@@ -101,11 +202,13 @@ function initDOM() {
   DOM.chatInput = $('chatInput');
   DOM.sendBtn = $('sendBtn');
   DOM.micBtn = $('micBtn');
-  DOM.statusBadge = $('statusBadge');
   DOM.avatarPulse = $('avatarPulse');
+  DOM.statusBadge = $('statusBadge');
   DOM.qlangs = $$('.qlang');
   DOM.shortcuts = $$('.shortcut');
-  DOM.phChips = $$('.ph-chip');
+  
+  // Soil
+  DOM.phSlider = $('phSlider');
   DOM.phValue = $('phValue');
   DOM.phLabel = $('phLabel');
   DOM.phDisplay = $('phDisplay');
@@ -114,12 +217,18 @@ function initDOM() {
   DOM.soilResultText = $('soilResultText');
   DOM.speakResultBtn = $('speakResultBtn');
   DOM.historyList = $('historyList');
+  
+  // Sarpanch
   DOM.scoreValue = $('scoreValue');
   DOM.scoreCircle = $('scoreCircle');
   DOM.generateSchemeBtn = $('generateSchemeBtn');
   DOM.schemeItems = $('schemeItems');
+  
+  // Toast
   DOM.toast = $('toast');
   DOM.toastMessage = $('toastMessage');
+  
+  // Alerts
   DOM.ackBtns = $$('.ack-btn');
   DOM.speakAlertBtns = $$('.speak-alert-btn');
   DOM.checklistBtns = $$('.checklist-btn');
@@ -146,36 +255,70 @@ function showScreen(screenId) {
 }
 
 // ============================================
-// LANGUAGE
+// LANGUAGE - COMPLETE
 // ============================================
 function setLanguage(lang) {
   AppState.language = lang;
+  const langData = LANG[lang];
   
+  // Update language buttons
   DOM.langBtns.forEach(btn => {
     btn.classList.toggle('active', btn.dataset.lang === lang);
   });
-  
   DOM.qlangs.forEach(btn => {
     btn.classList.toggle('active', btn.dataset.lang === lang);
   });
   
   // Update app title
   if (DOM.appTitle) {
-    const titles = { hi: 'मिट्टी की आवाज़', kn: 'ಮಣ್ಣಿನ ಧ್ವನಿ', mr: 'मातीचा आवाज', en: 'Mitti Ki Awaaz' };
+    const titles = { hi: 'मिट्टी की आवाज़', kn: 'ಮಣ್ಣಿನ ಧ್ವನಿ', mr: 'मातीचा आವाज', en: 'Mitti Ki Awaaz' };
     DOM.appTitle.textContent = titles[lang] || 'Mitti Ki Awaaz';
   }
+  
+  // Update all text elements with data attributes
+  document.querySelectorAll('[data-en]').forEach(el => {
+    const text = el.dataset[lang];
+    if (text) {
+      if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+        el.placeholder = text;
+      } else if (el.tagName === 'LABEL') {
+        el.textContent = text;
+      } else if (el.tagName === 'BUTTON') {
+        const span = el.querySelector('span');
+        if (span && span.dataset[lang]) {
+          span.textContent = span.dataset[lang];
+        } else if (!el.classList.contains('lang-btn') && !el.classList.contains('qlang')) {
+          el.textContent = text;
+        }
+      } else {
+        const textNodes = [];
+        el.childNodes.forEach(node => {
+          if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+            textNodes.push(node);
+          }
+        });
+        if (textNodes.length > 0) {
+          textNodes[0].textContent = text;
+        } else if (el.childNodes.length === 0) {
+          el.textContent = text;
+        }
+      }
+    }
+  });
+  
+  // Update specific UI elements
+  if (DOM.userName) DOM.userName.textContent = AppState.userName.split(' ')[0];
   
   // Update greeting
   if (DOM.chatContainer && DOM.chatContainer.children.length === 0) {
     DOM.chatContainer.innerHTML = '';
-    addMessage('Krishi Sakhi', LANG[lang].greeting, false);
+    addMessage('Krishi Sakhi', langData.greeting, false);
   }
   
-  if (DOM.statusBadge) {
-    DOM.statusBadge.textContent = LANG[lang].online;
-  }
+  // Update status
+  updateStatus('online');
   
-  // Update shortcuts - ONLY the text inside the button, NOT the emoji
+  // Update shortcuts
   DOM.shortcuts.forEach(btn => {
     const query = btn.dataset[`query-${lang}`];
     if (query) btn.dataset.query = query;
@@ -185,9 +328,18 @@ function setLanguage(lang) {
     }
   });
   
+  // Update pH label
   updatePhDisplay();
+  
+  // Update placeholders
+  if (DOM.chatInput) {
+    DOM.chatInput.placeholder = lang === 'hi' ? 'यहाँ लिखें या बोलें...' :
+                                lang === 'kn' ? 'ಟೈಪ್ ಮಾಡಿ ಅಥವಾ ಮಾತನಾಡಿ...' :
+                                lang === 'mr' ? 'येथे लिहा किंवा बोला...' :
+                                'Type or speak...';
+  }
+  
   localStorage.setItem('mittiLang', lang);
-  Logger.success(`✅ Language set to: ${lang}`);
 }
 
 function updateStatus(status) {
@@ -200,48 +352,53 @@ function updateStatus(status) {
 }
 
 // ============================================
-// GEMINI API - REAL IMPLEMENTATION
+// GEMINI API - WITH LOCATION
 // ============================================
 async function callGeminiAPI(message) {
   const lang = AppState.language;
+  const location = AppState.location;
   
   try {
     const response = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message, language: lang })
+      body: JSON.stringify({ 
+        message: `${message}\n\nMy location: ${location}`, 
+        language: lang 
+      })
     });
     
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
     
     const data = await response.json();
     return data.response || getFallbackResponse(message);
   } catch (error) {
-    Logger.error('API Error:', error);
+    console.error('API Error:', error);
     return getFallbackResponse(message);
   }
 }
 
 async function analyzeSoilAPI(ph) {
   const lang = AppState.language;
+  const location = AppState.location;
   
   try {
     const response = await fetch('/api/soil-analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ph, language: lang })
+      body: JSON.stringify({ 
+        ph, 
+        language: lang,
+        location: location 
+      })
     });
     
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
     
     const data = await response.json();
     return data.response || getFallbackResponse('soil');
   } catch (error) {
-    Logger.error('Soil API Error:', error);
+    console.error('Soil API Error:', error);
     return getFallbackResponse('soil');
   }
 }
@@ -434,28 +591,36 @@ function toggleListening() {
 }
 
 // ============================================
-// SOIL
+// SOIL - WITH SLIDER
 // ============================================
 function updatePhDisplay() {
-  const ph = AppState.ph;
+  const ph = parseFloat(DOM.phSlider.value);
+  AppState.ph = ph;
+  
   if (DOM.phValue) DOM.phValue.textContent = ph.toFixed(1);
   
   const lang = AppState.language;
   let label = '';
   let color = '';
   
-  if (ph < 5.5) {
-    label = lang === 'hi' ? 'अत्यंत अम्लीय' : lang === 'kn' ? 'ಹೆಚ್ಚು ಆಮ್ಲೀಯ' : lang === 'mr' ? 'अत्यंत आम्लयुक्त' : 'Highly Acidic';
+  if (ph < 4.5) {
+    label = lang === 'hi' ? 'अत्यंत अम्लीय' : lang === 'kn' ? 'ಅತ್ಯಂತ ಆಮ್ಲೀಯ' : lang === 'mr' ? 'अत्यंत आम्लयुक्त' : 'Extremely Acidic';
     color = '#D84315';
+  } else if (ph < 5.5) {
+    label = lang === 'hi' ? 'अत्यंत अम्लीय' : lang === 'kn' ? 'ಹೆಚ್ಚು ಆಮ್ಲೀಯ' : lang === 'mr' ? 'अत्यंत आम्लयुक्त' : 'Highly Acidic';
+    color = '#FF6B35';
   } else if (ph < 6.5) {
     label = lang === 'hi' ? 'मध्यम अम्लीय' : lang === 'kn' ? 'ಮಧ್ಯಮ ಆಮ್ಲೀಯ' : lang === 'mr' ? 'मध्यम आम्लयुक्त' : 'Moderately Acidic';
     color = '#E8A838';
   } else if (ph < 7.5) {
     label = lang === 'hi' ? 'उत्तम उदासीन' : lang === 'kn' ? 'ತಟಸ್ಥ' : lang === 'mr' ? 'उदासीन' : 'Optimal Neutral';
     color = '#2E7D32';
-  } else {
+  } else if (ph < 8.5) {
     label = lang === 'hi' ? 'क्षारीय' : lang === 'kn' ? 'ಕ್ಷಾರೀಯ' : lang === 'mr' ? 'क्षारयुक्त' : 'Alkaline';
     color = '#3F51B5';
+  } else {
+    label = lang === 'hi' ? 'अत्यंत क्षारीय' : lang === 'kn' ? 'ಅತ್ಯಂತ ಕ್ಷಾರೀಯ' : lang === 'mr' ? 'अत्यंत क्षारयुक्त' : 'Highly Alkaline';
+    color = '#1A237E';
   }
   
   if (DOM.phLabel) DOM.phLabel.textContent = label;
@@ -466,7 +631,9 @@ function updatePhDisplay() {
 }
 
 async function analyzeSoil() {
-  const ph = AppState.ph;
+  const ph = parseFloat(DOM.phSlider.value);
+  AppState.ph = ph;
+  
   if (DOM.soilResult) DOM.soilResult.style.display = 'block';
   if (DOM.soilResultText) DOM.soilResultText.textContent = LANG[AppState.language].thinking;
   
@@ -493,11 +660,7 @@ function renderHistory() {
   DOM.historyList.innerHTML = '';
   
   if (AppState.soilHistory.length === 0) {
-    const emptyMsg = AppState.language === 'hi' ? 'अभी कोई रिकॉर्ड नहीं' :
-                     AppState.language === 'kn' ? 'ಇನ್ನೂ ಯಾವುದೇ ದಾಖಲೆಗಳಿಲ್ಲ' :
-                     AppState.language === 'mr' ? 'अद्याप कोणतेही रेकॉर्ड नाहीत' :
-                     'No records yet';
-    DOM.historyList.innerHTML = `<div class="history-empty">${emptyMsg}</div>`;
+    DOM.historyList.innerHTML = `<div class="history-empty">${LANG[AppState.language].noHistory}</div>`;
     return;
   }
   
@@ -560,10 +723,73 @@ function showToast(msg, type = 'info') {
 }
 
 // ============================================
+// SETTINGS - Floating Settings Panel
+// ============================================
+function openSettings() {
+  const lang = AppState.language;
+  
+  const name = prompt(
+    lang === 'hi' ? 'किसान का नाम बदलें:' :
+    lang === 'kn' ? 'ರೈತರ ಹೆಸರು ಬದಲಾಯಿಸಿ:' :
+    lang === 'mr' ? 'शेतकऱ्याचे नाव बदला:' :
+    'Change farmer name:',
+    AppState.userName
+  );
+  
+  if (name && name.trim()) {
+    AppState.userName = name.trim();
+    if (DOM.userName) DOM.userName.textContent = name.trim().split(' ')[0];
+    localStorage.setItem('mittiUser', name.trim());
+  }
+  
+  const pin = prompt(
+    lang === 'hi' ? 'नया 4-डिजिट PIN डालें:' :
+    lang === 'kn' ? 'ಹೊಸ 4-ಅಂಕಿಯ PIN ನಮೂದಿಸಿ:' :
+    lang === 'mr' ? 'नवीन 4-अंकी PIN प्रविष्ट करा:' :
+    'Enter new 4-digit PIN:',
+    AppState.pin
+  );
+  
+  if (pin && pin.length === 4 && /^\d+$/.test(pin)) {
+    AppState.pin = pin;
+    localStorage.setItem('mittiPin', pin);
+  } else if (pin) {
+    showToast(
+      lang === 'hi' ? 'PIN 4 अंकों का होना चाहिए' :
+      lang === 'kn' ? 'PIN 4 ಅಂಕೆಗಳಾಗಿರಬೇಕು' :
+      lang === 'mr' ? 'PIN 4 अंकांचा असावा' :
+      'PIN must be 4 digits',
+      'error'
+    );
+  }
+  
+  const location = prompt(
+    lang === 'hi' ? 'अपना स्थान बदलें (गाँव, जिला, राज्य):' :
+    lang === 'kn' ? 'ನಿಮ್ಮ ಸ್ಥಳ ಬದಲಾಯಿಸಿ (ಗ್ರಾಮ, ಜಿಲ್ಲೆ, ರಾಜ್ಯ):' :
+    lang === 'mr' ? 'तुमचे स्थान बदला (गाव, जिल्हा, राज्य):' :
+    'Change your location (Village, District, State):',
+    AppState.location
+  );
+  
+  if (location && location.trim()) {
+    AppState.location = location.trim();
+    localStorage.setItem('mittiLocation', location.trim());
+    showToast(
+      lang === 'hi' ? `📍 स्थान अपडेट: ${location.trim()}` :
+      lang === 'kn' ? `📍 ಸ್ಥಳ ಅಪ್ಡೇಟ್: ${location.trim()}` :
+      lang === 'mr' ? `📍 स्थान अपडेट: ${location.trim()}` :
+      `📍 Location updated: ${location.trim()}`,
+      'success'
+    );
+  }
+}
+
+// ============================================
 // LOGIN / LOGOUT
 // ============================================
 function login() {
   const name = DOM.farmerName ? DOM.farmerName.value.trim() || 'Rajesh Kumar' : 'Rajesh Kumar';
+  const phone = DOM.phoneNumber ? DOM.phoneNumber.value.trim() || '9876543210' : '9876543210';
   const pin = DOM.pinCode ? DOM.pinCode.value.trim() || '1234' : '1234';
   
   if (pin.length !== 4) {
@@ -573,6 +799,8 @@ function login() {
   
   AppState.isLoggedIn = true;
   AppState.userName = name;
+  AppState.phone = phone;
+  AppState.pin = pin;
   
   if (DOM.userName) DOM.userName.textContent = name.split(' ')[0];
   
@@ -583,6 +811,10 @@ function login() {
     addMessage('Krishi Sakhi', LANG[AppState.language].greeting, false);
   }
   
+  // Load saved location
+  const savedLocation = localStorage.getItem('mittiLocation');
+  if (savedLocation) AppState.location = savedLocation;
+  
   updatePhDisplay();
   updateResilienceScore();
   renderHistory();
@@ -591,13 +823,14 @@ function login() {
   
   localStorage.setItem('mittiLoggedIn', 'true');
   localStorage.setItem('mittiUser', name);
+  localStorage.setItem('mittiPhone', phone);
+  localStorage.setItem('mittiPin', pin);
 }
 
 function logout() {
   AppState.isLoggedIn = false;
   showScreen('loginScreen');
   localStorage.removeItem('mittiLoggedIn');
-  localStorage.removeItem('mittiUser');
   showToast('Logged out', 'info');
 }
 
@@ -651,10 +884,18 @@ function init() {
   const savedLang = localStorage.getItem('mittiLang') || 'hi';
   const loggedIn = localStorage.getItem('mittiLoggedIn') === 'true';
   const savedUser = localStorage.getItem('mittiUser') || 'Rajesh Kumar';
+  const savedPhone = localStorage.getItem('mittiPhone') || '9876543210';
+  const savedPin = localStorage.getItem('mittiPin') || '1234';
+  const savedLocation = localStorage.getItem('mittiLocation') || 'Ramnagar, Karnataka';
   const savedHistory = localStorage.getItem('mittiSoilHistory');
+  
   if (savedHistory) {
     try { AppState.soilHistory = JSON.parse(savedHistory); } catch (e) {}
   }
+  
+  AppState.location = savedLocation;
+  AppState.phone = savedPhone;
+  AppState.pin = savedPin;
   
   setLanguage(savedLang);
   
@@ -690,12 +931,15 @@ function init() {
   }
   
   console.log('🌾 Mitti Ki Awaaz - Ready!');
+  console.log(`📍 Location: ${AppState.location}`);
+  console.log(`📘 Language: ${LANG[AppState.language].name}`);
 }
 
 // ============================================
 // EVENT LISTENERS
 // ============================================
 function setupEvents() {
+  // Login
   if (DOM.loginBtn) DOM.loginBtn.addEventListener('click', login);
   
   [DOM.pinCode, DOM.phoneNumber, DOM.farmerName].forEach(el => {
@@ -704,14 +948,15 @@ function setupEvents() {
     });
   });
   
+  // Logout
   if (DOM.logoutBtn) DOM.logoutBtn.addEventListener('click', logout);
   
+  // Settings - Floating Settings
   if (DOM.settingsBtn) {
-    DOM.settingsBtn.addEventListener('click', () => {
-      alert(`⚙️ Settings\n\nLanguage: ${LANG[AppState.language].name || AppState.language}\nUser: ${AppState.userName}\nScans: ${AppState.soilHistory.length}`);
-    });
+    DOM.settingsBtn.addEventListener('click', openSettings);
   }
   
+  // Language buttons
   DOM.langBtns.forEach(btn => {
     btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
   });
@@ -719,6 +964,7 @@ function setupEvents() {
     btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
   });
   
+  // Chat
   if (DOM.sendBtn) {
     DOM.sendBtn.addEventListener('click', () => {
       const text = DOM.chatInput ? DOM.chatInput.value.trim() : '';
@@ -734,12 +980,15 @@ function setupEvents() {
     });
   }
   
+  // Mic
   if (DOM.micBtn) DOM.micBtn.addEventListener('click', toggleListening);
   
+  // Navigation
   DOM.navItems.forEach(item => {
     item.addEventListener('click', () => navigateTo(item.dataset.screen));
   });
   
+  // Shortcuts
   DOM.shortcuts.forEach(btn => {
     btn.addEventListener('click', () => {
       const query = btn.dataset.query;
@@ -747,17 +996,15 @@ function setupEvents() {
     });
   });
   
-  DOM.phChips.forEach(chip => {
-    chip.addEventListener('click', () => {
-      DOM.phChips.forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      AppState.ph = parseFloat(chip.dataset.ph);
-      updatePhDisplay();
-    });
-  });
+  // Soil Slider
+  if (DOM.phSlider) {
+    DOM.phSlider.addEventListener('input', updatePhDisplay);
+  }
   
+  // Analyze soil
   if (DOM.analyzeBtn) DOM.analyzeBtn.addEventListener('click', analyzeSoil);
   
+  // Speak result
   if (DOM.speakResultBtn) {
     DOM.speakResultBtn.addEventListener('click', () => {
       const text = DOM.soilResultText ? DOM.soilResultText.textContent : '';
@@ -765,15 +1012,20 @@ function setupEvents() {
     });
   }
   
+  // Alerts
   DOM.ackBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-      btn.textContent = '✅ Received';
+      btn.textContent = '✅ ' + (AppState.language === 'hi' ? 'मिली' : 
+                                 AppState.language === 'kn' ? 'ಸ್ವೀಕರಿಸಲಾಗಿದೆ' : 
+                                 AppState.language === 'mr' ? 'मिळाली' : 
+                                 'Received');
       btn.disabled = true;
       btn.style.opacity = '0.5';
       showToast('Alert acknowledged ✅', 'success');
     });
   });
   
+  // Speak alerts
   DOM.speakAlertBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       const alertId = btn.dataset.alert;
@@ -785,6 +1037,7 @@ function setupEvents() {
     });
   });
   
+  // Checklists
   DOM.checklistBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       const type = btn.dataset.checklist;
@@ -798,12 +1051,14 @@ function setupEvents() {
     });
   });
   
+  // Close checklist
   if (DOM.closeChecklist) {
     DOM.closeChecklist.addEventListener('click', () => {
       if (DOM.checklistDisplay) DOM.checklistDisplay.style.display = 'none';
     });
   }
   
+  // Generate scheme
   if (DOM.generateSchemeBtn) {
     DOM.generateSchemeBtn.addEventListener('click', () => {
       const lang = AppState.language;
@@ -815,10 +1070,9 @@ function setupEvents() {
       if (DOM.schemeItems) {
         const item = document.createElement('div');
         item.className = 'scheme-item';
-        const statusText = lang === 'hi' ? 'सबमिट' : lang === 'kn' ? 'ಸಲ್ಲಿಸಲಾಗಿದೆ' : lang === 'mr' ? 'सबमिट' : 'SUBMITTED';
         item.innerHTML = `
           <div><strong>${name}</strong><small>12 Farmers • ₹2,40,000</small></div>
-          <span class="status submitted">${statusText}</span>
+          <span class="status submitted">${LANG[lang].submitted}</span>
         `;
         DOM.schemeItems.appendChild(item);
       }
@@ -840,5 +1094,5 @@ document.addEventListener('DOMContentLoaded', init);
 
 console.log('🌾 ==========================================');
 console.log('🌾 MITTI KI AWAAZ - Krishi Sakhi');
-console.log('🌾 Version 2.0.0');
+console.log('🌾 Version 3.0.0 - Full Language Support');
 console.log('🌾 ==========================================');
