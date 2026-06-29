@@ -1,29 +1,217 @@
 // ============================================
-// MITTI KI AWAAZ - Complete Server for Render
+// MITTI KI AWAAZ - Complete Server with Advanced Logging
 // ============================================
 
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ============================================
+// 📝 ENHANCED LOGGING SYSTEM
+// ============================================
+
+// Log levels
+const LOG_LEVELS = {
+  INFO: '📘 INFO',
+  SUCCESS: '✅ SUCCESS',
+  WARNING: '⚠️ WARNING',
+  ERROR: '❌ ERROR',
+  DEBUG: '🔍 DEBUG',
+  REQUEST: '📨 REQUEST',
+  RESPONSE: '📤 RESPONSE',
+  GEMINI: '🤖 GEMINI',
+  FALLBACK: '📋 FALLBACK'
+};
+
+// Color codes for console
+const COLORS = {
+  reset: '\x1b[0m',
+  bright: '\x1b[1m',
+  dim: '\x1b[2m',
+  underscore: '\x1b[4m',
+  blink: '\x1b[5m',
+  reverse: '\x1b[7m',
+  hidden: '\x1b[8m',
+  
+  fg: {
+    black: '\x1b[30m',
+    red: '\x1b[31m',
+    green: '\x1b[32m',
+    yellow: '\x1b[33m',
+    blue: '\x1b[34m',
+    magenta: '\x1b[35m',
+    cyan: '\x1b[36m',
+    white: '\x1b[37m',
+    crimson: '\x1b[38m'
+  },
+  
+  bg: {
+    black: '\x1b[40m',
+    red: '\x1b[41m',
+    green: '\x1b[42m',
+    yellow: '\x1b[43m',
+    blue: '\x1b[44m',
+    magenta: '\x1b[45m',
+    cyan: '\x1b[46m',
+    white: '\x1b[47m'
+  }
+};
+
+// Log file setup
+const LOG_FILE = path.join(__dirname, 'logs', 'app.log');
+const ERROR_LOG_FILE = path.join(__dirname, 'logs', 'error.log');
+
+// Ensure logs directory exists
+try {
+  if (!fs.existsSync(path.join(__dirname, 'logs'))) {
+    fs.mkdirSync(path.join(__dirname, 'logs'), { recursive: true });
+  }
+} catch (err) {
+  // Silent fail - logs will still go to console
+}
+
+// Write to log file
+function writeToLogFile(level, message, data = null) {
+  try {
+    const timestamp = new Date().toISOString();
+    let logEntry = `[${timestamp}] [${level}] ${message}`;
+    if (data) {
+      logEntry += `\n${JSON.stringify(data, null, 2)}`;
+    }
+    logEntry += '\n';
+    
+    // Append to main log file
+    fs.appendFileSync(LOG_FILE, logEntry, 'utf8');
+    
+    // If error, also write to error log
+    if (level === LOG_LEVELS.ERROR || level === LOG_LEVELS.WARNING) {
+      fs.appendFileSync(ERROR_LOG_FILE, logEntry, 'utf8');
+    }
+  } catch (err) {
+    // Silent fail - don't let logging break the app
+  }
+}
+
+// Main logger function
+function logger(level, message, data = null, color = null) {
+  const timestamp = new Date().toLocaleString('en-IN', { 
+    timeZone: 'Asia/Kolkata',
+    hour12: true 
+  });
+  
+  let prefix = '';
+  let suffix = COLORS.reset;
+  
+  // Set colors based on level
+  switch(level) {
+    case LOG_LEVELS.INFO:
+      prefix = COLORS.fg.blue;
+      break;
+    case LOG_LEVELS.SUCCESS:
+      prefix = COLORS.fg.green;
+      break;
+    case LOG_LEVELS.WARNING:
+      prefix = COLORS.fg.yellow;
+      break;
+    case LOG_LEVELS.ERROR:
+      prefix = COLORS.fg.red;
+      break;
+    case LOG_LEVELS.DEBUG:
+      prefix = COLORS.fg.cyan;
+      break;
+    case LOG_LEVELS.REQUEST:
+      prefix = COLORS.fg.magenta;
+      break;
+    case LOG_LEVELS.RESPONSE:
+      prefix = COLORS.fg.green;
+      break;
+    case LOG_LEVELS.GEMINI:
+      prefix = COLORS.fg.crimson + COLORS.bright;
+      break;
+    case LOG_LEVELS.FALLBACK:
+      prefix = COLORS.fg.yellow + COLORS.bright;
+      break;
+    default:
+      prefix = COLORS.fg.white;
+  }
+  
+  // Build console message
+  let consoleMsg = `${prefix}[${timestamp}] ${level}${suffix}`;
+  consoleMsg += ` ${message}`;
+  
+  // Log to console
+  console.log(consoleMsg);
+  
+  // If data is provided, log it beautifully
+  if (data) {
+    if (typeof data === 'object') {
+      console.log(COLORS.fg.dim + JSON.stringify(data, null, 2) + COLORS.reset);
+    } else {
+      console.log(COLORS.fg.dim + data + COLORS.reset);
+    }
+  }
+  
+  // Write to file (without colors)
+  writeToLogFile(level, message, data);
+}
+
+// Request logger middleware
+app.use((req, res, next) => {
+  const startTime = Date.now();
+  
+  // Log the request
+  logger(LOG_LEVELS.REQUEST, `${req.method} ${req.url}`, {
+    ip: req.ip || req.connection.remoteAddress,
+    userAgent: req.headers['user-agent'] || 'Unknown',
+    contentType: req.headers['content-type'] || 'None',
+    bodySize: req.headers['content-length'] || '0'
+  });
+  
+  // Capture response
+  const originalSend = res.send;
+  res.send = function(data) {
+    const duration = Date.now() - startTime;
+    const status = res.statusCode;
+    
+    let statusColor = COLORS.fg.green;
+    if (status >= 400) statusColor = COLORS.fg.red;
+    else if (status >= 300) statusColor = COLORS.fg.yellow;
+    
+    logger(LOG_LEVELS.RESPONSE, `${req.method} ${req.url} → ${status} (${duration}ms)`, {
+      status: status,
+      duration: `${duration}ms`,
+      size: data ? data.length : 0
+    });
+    
+    originalSend.call(this, data);
+  };
+  
+  next();
+});
+
+// ============================================
 // MIDDLEWARE
 // ============================================
+
+logger(LOG_LEVELS.INFO, '🚀 Initializing Mitti Ki Awaaz Server...');
+
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files from root directory
+// Serve static files
 app.use(express.static(__dirname));
 
 // ============================================
 // SYSTEM PROMPTS FOR EACH LANGUAGE
 // ============================================
+
 const SYSTEM_PROMPTS = {
   hi: `आप 'कृषि सखी' हैं, जो भारतीय किसानों के लिए एक बुद्धिमान और दयालु कृषि और जलवायु सलाहकार हैं।
 मैंडेट: आपको अपना पूरा उत्तर पूरी तरह से हिंदी में देवनागरी लिपि में ही लिखना होगा। अंग्रेजी शब्दों या रोमन लिपि का उपयोग बिल्कुल न करें।
@@ -43,12 +231,12 @@ Your expertise: Soil testing, weather forecasting, government schemes, crop sele
 };
 
 // ============================================
-// COMPLETE FALLBACK RESPONSES (No API Key Mode)
+// COMPLETE FALLBACK RESPONSES
 // ============================================
+
 function getFallbackResponse(query, lang = 'hi') {
   const q = query.toLowerCase();
   
-  // Language-specific fallbacks
   const fallbacks = {
     hi: {
       soil: `🌿 मिट्टी विश्लेषण और उर्वरता निदान (कृषि सखी सलाहकार)
@@ -219,7 +407,6 @@ Ask me anything about your farm!`
     }
   };
 
-  // Detect query type
   const langData = fallbacks[lang] || fallbacks.en;
   
   if (q.includes('मिट्टी') || q.includes('soil') || q.includes('माती') || q.includes('ಮಣ್ಣು') || q.includes('pH') || q.includes('पीएच')) {
@@ -234,7 +421,7 @@ Ask me anything about your farm!`
   if (q.includes('फसल') || q.includes('crop') || q.includes('ಬೆಳೆ') || q.includes('पीक') || q.includes('बीज') || q.includes('बुवाई') || q.includes('ಬಿತ್ತನೆ')) {
     return langData.crop;
   }
-  if (q.includes('भाव') || q.includes('price') || q.includes('मारुकಟ್ಟೆ') || q.includes('बाजार') || q.includes('ಮಾರುಕಟ್ಟೆ') || q.includes('मंडी') || q.includes('ಮಂಡಿ')) {
+  if (q.includes('भाव') || q.includes('price') || q.includes('ಮಾರುಕಟ್ಟೆ') || q.includes('बाजार') || q.includes('ಮಾರುಕಟ್ಟೆ') || q.includes('मंडी') || q.includes('ಮಂಡಿ')) {
     return langData.price;
   }
   
@@ -242,47 +429,79 @@ Ask me anything about your farm!`
 }
 
 // ============================================
-// GEMINI API HELPER
+// GEMINI API HELPER WITH LOGGING
 // ============================================
+
 async function callGemini(prompt, language = 'hi') {
+  const startTime = Date.now();
+  
   // Check if API key exists
   if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'your_gemini_api_key_here') {
-    console.log('⚠️ No Gemini API key - using fallback mode');
+    logger(LOG_LEVELS.WARNING, 'No Gemini API key found - using fallback mode');
     return null;
   }
 
   try {
+    logger(LOG_LEVELS.GEMINI, 'Calling Gemini API...', { language, promptLength: prompt.length });
+    
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
     const result = await model.generateContent(prompt);
     const response = await result.response;
-    return response.text();
+    const text = response.text();
+    
+    const duration = Date.now() - startTime;
+    logger(LOG_LEVELS.SUCCESS, `Gemini API responded in ${duration}ms`, {
+      responseLength: text.length,
+      duration: `${duration}ms`
+    });
+    
+    return text;
   } catch (error) {
-    console.error('Gemini API Error:', error.message);
+    const duration = Date.now() - startTime;
+    logger(LOG_LEVELS.ERROR, `Gemini API error after ${duration}ms`, {
+      error: error.message,
+      stack: error.stack,
+      duration: `${duration}ms`
+    });
     return null;
   }
 }
 
 // ============================================
-// API ROUTES
+// API ROUTES WITH LOGGING
 // ============================================
 
-// 1. Health Check (for Render)
+// 1. Health Check
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: '🌾 Mitti Ki Awaaz is running!', 
+  const healthData = {
+    status: '🌾 Mitti Ki Awaaz is running!',
     timestamp: new Date().toISOString(),
     gemini: process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here' ? '✅ Connected' : '❌ Fallback Mode',
-    uptime: process.uptime()
-  });
+    uptime: process.uptime(),
+    memory: process.memoryUsage(),
+    nodeVersion: process.version,
+    platform: process.platform
+  };
+  
+  logger(LOG_LEVELS.SUCCESS, 'Health check requested', healthData);
+  res.json(healthData);
 });
 
 // 2. Chat with Krishi Sakhi
 app.post('/api/chat', async (req, res) => {
+  const startTime = Date.now();
+  const { message, language = 'hi' } = req.body;
+  
+  logger(LOG_LEVELS.INFO, `Chat request received`, {
+    language,
+    messageLength: message?.length || 0,
+    messagePreview: message?.substring(0, 50) + '...'
+  });
+  
   try {
-    const { message, language = 'hi' } = req.body;
-    
     if (!message || message.trim().length === 0) {
+      logger(LOG_LEVELS.WARNING, 'Empty message received');
       return res.json({ 
         success: true, 
         response: "Please ask something about farming! / कृपया खेती के बारे में कुछ पूछें!" 
@@ -311,8 +530,16 @@ Response:`;
     
     // If Gemini fails, use fallback
     if (!aiResponse) {
+      logger(LOG_LEVELS.FALLBACK, 'Using fallback response for chat', { language });
       aiResponse = getFallbackResponse(message, language);
     }
+    
+    const duration = Date.now() - startTime;
+    logger(LOG_LEVELS.SUCCESS, `Chat request completed in ${duration}ms`, {
+      responseLength: aiResponse.length,
+      duration: `${duration}ms`,
+      usedGemini: aiResponse !== getFallbackResponse(message, language)
+    });
     
     res.json({ 
       success: true, 
@@ -320,19 +547,30 @@ Response:`;
     });
     
   } catch (error) {
-    console.error('Chat Error:', error.message);
+    const duration = Date.now() - startTime;
+    logger(LOG_LEVELS.ERROR, `Chat request failed after ${duration}ms`, {
+      error: error.message,
+      stack: error.stack
+    });
+    
     res.json({ 
       success: false, 
-      response: getFallbackResponse(req.body.message, req.body.language || 'hi')
+      response: getFallbackResponse(message, language || 'hi')
     });
   }
 });
 
 // 3. Soil Analysis
 app.post('/api/soil-analyze', async (req, res) => {
+  const startTime = Date.now();
+  const { ph, language = 'hi' } = req.body;
+  
+  logger(LOG_LEVELS.INFO, `Soil analysis request`, {
+    ph,
+    language
+  });
+  
   try {
-    const { ph, language = 'hi' } = req.body;
-    
     const systemPrompt = SYSTEM_PROMPTS[language] || SYSTEM_PROMPTS.en;
     const langName = language === 'hi' ? 'Hindi' : language === 'kn' ? 'Kannada' : language === 'mr' ? 'Marathi' : 'English';
     
@@ -351,13 +589,18 @@ Keep it short and actionable.
 
 Response:`;
 
-    // Try Gemini first
     let aiResponse = await callGemini(prompt, language);
     
-    // If Gemini fails, use fallback
     if (!aiResponse) {
+      logger(LOG_LEVELS.FALLBACK, 'Using fallback response for soil analysis', { ph, language });
       aiResponse = getFallbackResponse('soil', language);
     }
+    
+    const duration = Date.now() - startTime;
+    logger(LOG_LEVELS.SUCCESS, `Soil analysis completed in ${duration}ms`, {
+      ph,
+      responseLength: aiResponse.length
+    });
     
     res.json({ 
       success: true, 
@@ -365,19 +608,30 @@ Response:`;
     });
     
   } catch (error) {
-    console.error('Soil Analysis Error:', error.message);
+    const duration = Date.now() - startTime;
+    logger(LOG_LEVELS.ERROR, `Soil analysis failed after ${duration}ms`, {
+      error: error.message,
+      ph
+    });
+    
     res.json({ 
       success: false, 
-      response: getFallbackResponse('soil', req.body.language || 'hi')
+      response: getFallbackResponse('soil', language || 'hi')
     });
   }
 });
 
 // 4. Weather Forecast
 app.post('/api/weather', async (req, res) => {
+  const startTime = Date.now();
+  const { location = 'Ramnagar, Karnataka', language = 'hi' } = req.body;
+  
+  logger(LOG_LEVELS.INFO, `Weather forecast request`, {
+    location,
+    language
+  });
+  
   try {
-    const { location = 'Ramnagar, Karnataka', language = 'hi' } = req.body;
-    
     const systemPrompt = SYSTEM_PROMPTS[language] || SYSTEM_PROMPTS.en;
     const langName = language === 'hi' ? 'Hindi' : language === 'kn' ? 'Kannada' : language === 'mr' ? 'Marathi' : 'English';
     
@@ -396,13 +650,18 @@ Keep it under 5 sentences.
 
 Response:`;
 
-    // Try Gemini first
     let aiResponse = await callGemini(prompt, language);
     
-    // If Gemini fails, use fallback
     if (!aiResponse) {
+      logger(LOG_LEVELS.FALLBACK, 'Using fallback response for weather', { location, language });
       aiResponse = getFallbackResponse('weather', language);
     }
+    
+    const duration = Date.now() - startTime;
+    logger(LOG_LEVELS.SUCCESS, `Weather forecast completed in ${duration}ms`, {
+      location,
+      responseLength: aiResponse.length
+    });
     
     res.json({ 
       success: true, 
@@ -410,19 +669,30 @@ Response:`;
     });
     
   } catch (error) {
-    console.error('Weather Error:', error.message);
+    const duration = Date.now() - startTime;
+    logger(LOG_LEVELS.ERROR, `Weather forecast failed after ${duration}ms`, {
+      error: error.message,
+      location
+    });
+    
     res.json({ 
       success: false, 
-      response: getFallbackResponse('weather', req.body.language || 'hi')
+      response: getFallbackResponse('weather', language || 'hi')
     });
   }
 });
 
 // 5. Scheme Information
 app.post('/api/scheme', async (req, res) => {
+  const startTime = Date.now();
+  const { schemeName = 'PM-KISAN', language = 'hi' } = req.body;
+  
+  logger(LOG_LEVELS.INFO, `Scheme information request`, {
+    schemeName,
+    language
+  });
+  
   try {
-    const { schemeName = 'PM-KISAN', language = 'hi' } = req.body;
-    
     const systemPrompt = SYSTEM_PROMPTS[language] || SYSTEM_PROMPTS.en;
     const langName = language === 'hi' ? 'Hindi' : language === 'kn' ? 'Kannada' : language === 'mr' ? 'Marathi' : 'English';
     
@@ -441,13 +711,18 @@ Keep it short and clear.
 
 Response:`;
 
-    // Try Gemini first
     let aiResponse = await callGemini(prompt, language);
     
-    // If Gemini fails, use fallback
     if (!aiResponse) {
+      logger(LOG_LEVELS.FALLBACK, 'Using fallback response for scheme', { schemeName, language });
       aiResponse = getFallbackResponse('scheme', language);
     }
+    
+    const duration = Date.now() - startTime;
+    logger(LOG_LEVELS.SUCCESS, `Scheme information completed in ${duration}ms`, {
+      schemeName,
+      responseLength: aiResponse.length
+    });
     
     res.json({ 
       success: true, 
@@ -455,19 +730,30 @@ Response:`;
     });
     
   } catch (error) {
-    console.error('Scheme Error:', error.message);
+    const duration = Date.now() - startTime;
+    logger(LOG_LEVELS.ERROR, `Scheme information failed after ${duration}ms`, {
+      error: error.message,
+      schemeName
+    });
+    
     res.json({ 
       success: false, 
-      response: getFallbackResponse('scheme', req.body.language || 'hi')
+      response: getFallbackResponse('scheme', language || 'hi')
     });
   }
 });
 
 // 6. Crop Price Information
 app.post('/api/price', async (req, res) => {
+  const startTime = Date.now();
+  const { crop = 'groundnut', language = 'hi' } = req.body;
+  
+  logger(LOG_LEVELS.INFO, `Crop price request`, {
+    crop,
+    language
+  });
+  
   try {
-    const { crop = 'groundnut', language = 'hi' } = req.body;
-    
     const systemPrompt = SYSTEM_PROMPTS[language] || SYSTEM_PROMPTS.en;
     const langName = language === 'hi' ? 'Hindi' : language === 'kn' ? 'Kannada' : language === 'mr' ? 'Marathi' : 'English';
     
@@ -486,13 +772,18 @@ Keep it short.
 
 Response:`;
 
-    // Try Gemini first
     let aiResponse = await callGemini(prompt, language);
     
-    // If Gemini fails, use fallback
     if (!aiResponse) {
+      logger(LOG_LEVELS.FALLBACK, 'Using fallback response for price', { crop, language });
       aiResponse = getFallbackResponse('price', language);
     }
+    
+    const duration = Date.now() - startTime;
+    logger(LOG_LEVELS.SUCCESS, `Crop price completed in ${duration}ms`, {
+      crop,
+      responseLength: aiResponse.length
+    });
     
     res.json({ 
       success: true, 
@@ -500,27 +791,33 @@ Response:`;
     });
     
   } catch (error) {
-    console.error('Price Error:', error.message);
+    const duration = Date.now() - startTime;
+    logger(LOG_LEVELS.ERROR, `Crop price failed after ${duration}ms`, {
+      error: error.message,
+      crop
+    });
+    
     res.json({ 
       success: false, 
-      response: getFallbackResponse('price', req.body.language || 'hi')
+      response: getFallbackResponse('price', language || 'hi')
     });
   }
 });
 
 // ============================================
-// SERVE FRONTEND (SPA support)
+// SERVE FRONTEND
 // ============================================
 
 // Serve index.html for root
 app.get('/', (req, res) => {
+  logger(LOG_LEVELS.INFO, 'Serving index.html');
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // For all other routes, serve index.html (SPA routing)
 app.get('*', (req, res) => {
-  // Don't interfere with API routes
   if (req.path.startsWith('/api/')) {
+    logger(LOG_LEVELS.WARNING, `API endpoint not found: ${req.path}`);
     return res.status(404).json({ error: 'API endpoint not found' });
   }
   res.sendFile(path.join(__dirname, 'index.html'));
@@ -532,15 +829,22 @@ app.get('*', (req, res) => {
 
 // 404 handler
 app.use((req, res) => {
+  logger(LOG_LEVELS.WARNING, `404 Not Found: ${req.method} ${req.url}`);
   res.status(404).sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Global error handler
 app.use((err, req, res, next) => {
-  console.error('Server Error:', err);
+  logger(LOG_LEVELS.ERROR, `Unhandled error`, {
+    error: err.message,
+    stack: err.stack,
+    url: req.url,
+    method: req.method
+  });
+  
   res.status(500).json({ 
     error: 'Something went wrong! Please try again.',
-    details: err.message 
+    details: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
   });
 });
 
@@ -549,23 +853,58 @@ app.use((err, req, res, next) => {
 // ============================================
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log('\n' + '='.repeat(50));
-  console.log('🌾 MITTI KI AWAAZ - Server Started');
-  console.log('='.repeat(50));
-  console.log(`📍 Local:    http://localhost:${PORT}`);
-  console.log(`📍 Network:  http://0.0.0.0:${PORT}`);
-  console.log(`🤖 Gemini AI: ${process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here' ? '✅ CONNECTED' : '❌ FALLBACK MODE'}`);
-  console.log(`📁 Serving:  ${__dirname}`);
-  console.log('='.repeat(50) + '\n');
+  console.log('\n' + '='.repeat(60));
+  console.log(COLORS.fg.green + '🌾 MITTI KI AWAAZ - Server Started Successfully' + COLORS.reset);
+  console.log('='.repeat(60));
+  console.log(COLORS.fg.blue + `📍 Local:    http://localhost:${PORT}` + COLORS.reset);
+  console.log(COLORS.fg.blue + `📍 Network:  http://0.0.0.0:${PORT}` + COLORS.reset);
+  console.log(COLORS.fg.green + `🤖 Gemini AI: ${process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here' ? '✅ CONNECTED' : '❌ FALLBACK MODE'}` + COLORS.reset);
+  console.log(COLORS.fg.cyan + `📁 Serving:  ${__dirname}` + COLORS.reset);
+  console.log(COLORS.fg.yellow + `📝 Logs:     ${path.join(__dirname, 'logs')}` + COLORS.reset);
+  console.log(COLORS.fg.magenta + `🌐 Environment: ${process.env.NODE_ENV || 'development'}` + COLORS.reset);
+  console.log('='.repeat(60));
+  console.log(COLORS.fg.dim + '📘 INFO  | ✅ SUCCESS | ⚠️ WARNING | ❌ ERROR | 🔍 DEBUG' + COLORS.reset);
+  console.log(COLORS.fg.dim + '📨 REQUEST | 📤 RESPONSE | 🤖 GEMINI | 📋 FALLBACK' + COLORS.reset);
+  console.log('='.repeat(60) + '\n');
+  
+  logger(LOG_LEVELS.SUCCESS, '🚀 Server initialization complete');
+  logger(LOG_LEVELS.INFO, `📂 Log directory: ${path.join(__dirname, 'logs')}`);
+  
+  if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'your_gemini_api_key_here') {
+    logger(LOG_LEVELS.WARNING, '⚠️ Running in FALLBACK mode - no Gemini API key found');
+    logger(LOG_LEVELS.INFO, '💡 To enable AI, add GEMINI_API_KEY to .env file');
+  } else {
+    logger(LOG_LEVELS.SUCCESS, '🤖 Gemini AI is ready and connected');
+  }
 });
 
 // Handle shutdown gracefully
 process.on('SIGTERM', () => {
-  console.log('🛑 Received SIGTERM, shutting down gracefully...');
+  logger(LOG_LEVELS.WARNING, '🛑 Received SIGTERM, shutting down gracefully...');
   process.exit(0);
 });
 
 process.on('SIGINT', () => {
-  console.log('🛑 Received SIGINT, shutting down gracefully...');
+  logger(LOG_LEVELS.WARNING, '🛑 Received SIGINT, shutting down gracefully...');
   process.exit(0);
 });
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (error) => {
+  logger(LOG_LEVELS.ERROR, '💥 Uncaught Exception', {
+    error: error.message,
+    stack: error.stack
+  });
+});
+
+// Handle unhandled rejections
+process.on('unhandledRejection', (reason, promise) => {
+  logger(LOG_LEVELS.ERROR, '💥 Unhandled Rejection', {
+    reason: reason,
+    promise: promise
+  });
+});
+
+console.log('\n' + '='.repeat(60));
+console.log(COLORS.fg.green + '✅ MITTI KI AWAAZ IS READY!' + COLORS.reset);
+console.log('='.repeat(60) + '\n');
