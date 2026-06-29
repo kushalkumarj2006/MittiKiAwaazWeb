@@ -3,6 +3,17 @@
 // ============================================
 
 // ============================================
+// SIMPLE LOGGER
+// ============================================
+const Logger = {
+  info: (msg, data) => console.log(`📘 ${msg}`, data || ''),
+  success: (msg, data) => console.log(`✅ ${msg}`, data || ''),
+  error: (msg, data) => console.log(`❌ ${msg}`, data || ''),
+  warning: (msg, data) => console.log(`⚠️ ${msg}`, data || ''),
+  debug: (msg, data) => console.log(`🔍 ${msg}`, data || '')
+};
+
+// ============================================
 // STATE
 // ============================================
 const AppState = {
@@ -19,13 +30,18 @@ const AppState = {
 };
 
 // ============================================
-// LANGUAGE DATA - FULL MULTILINGUAL SUPPORT
+// DOM HELPERS
+// ============================================
+function $(id) { return document.getElementById(id); }
+function $$(sel) { return document.querySelectorAll(sel); }
+
+// ============================================
+// LANGUAGE DATA - FULL
 // ============================================
 const LANG = {
   hi: {
     name: 'हिंदी',
     code: 'hi-IN',
-    display: 'Hindi',
     greeting: '👋 नमस्ते! मैं कृषि सखी हूँ। आज आपके खेत का क्या हाल है?',
     online: '● ऑनलाइन',
     listening: '🎤 सुन रहा हूँ...',
@@ -36,7 +52,6 @@ const LANG = {
   kn: {
     name: 'ಕನ್ನಡ',
     code: 'kn-IN',
-    display: 'Kannada',
     greeting: '👋 ನಮಸ್ತೆ! ನಾನು ಕೃಷಿ ಸಖಿ. ಇಂದು ನಿಮ್ಮ ಹೊಲದ ಸ್ಥಿತಿ ಹೇಗಿದೆ?',
     online: '● ಆನ್ಲೈನ್',
     listening: '🎤 ಕೇಳುತ್ತಿದ್ದೇನೆ...',
@@ -47,7 +62,6 @@ const LANG = {
   mr: {
     name: 'मराठी',
     code: 'mr-IN',
-    display: 'Marathi',
     greeting: '👋 नमस्कार! मी कृषी सखी आहे. आज तुमच्या शेताची काय परिस्थिती आहे?',
     online: '● ऑनलाइन',
     listening: '🎤 ऐकत आहे...',
@@ -58,7 +72,6 @@ const LANG = {
   en: {
     name: 'English',
     code: 'en-US',
-    display: 'English',
     greeting: '👋 Namaste! I am Krishi Sakhi. How is your field today?',
     online: '● Online',
     listening: '🎤 Listening...',
@@ -68,11 +81,7 @@ const LANG = {
   }
 };
 
-// ============================================
-// DOM HELPERS
-// ============================================
-function $(id) { return document.getElementById(id); }
-function $$(sel) { return document.querySelectorAll(sel); }
+function getLang() { return AppState.language || 'hi'; }
 
 // ============================================
 // DOM REFS
@@ -96,8 +105,8 @@ function initDOM() {
   DOM.chatInput = $('chatInput');
   DOM.sendBtn = $('sendBtn');
   DOM.micBtn = $('micBtn');
-  DOM.avatarPulse = $('avatarPulse');
   DOM.statusBadge = $('statusBadge');
+  DOM.avatarPulse = $('avatarPulse');
   DOM.qlangs = $$('.qlang');
   DOM.shortcuts = $$('.shortcut');
   DOM.phChips = $$('.ph-chip');
@@ -119,7 +128,6 @@ function initDOM() {
   DOM.speakAlertBtns = $$('.speak-alert-btn');
   DOM.checklistBtns = $$('.checklist-btn');
   DOM.checklistDisplay = $('checklistDisplay');
-  DOM.checklistTitle = $('checklistTitle');
   DOM.checklistContent = $('checklistContent');
   DOM.closeChecklist = $('closeChecklist');
   DOM.appTitle = $('appTitle');
@@ -142,13 +150,12 @@ function showScreen(screenId) {
 }
 
 // ============================================
-// LANGUAGE - FULL IMPLEMENTATION
+// LANGUAGE - FULL
 // ============================================
 function setLanguage(lang) {
   AppState.language = lang;
   const langData = LANG[lang];
   
-  // Update language buttons
   DOM.langBtns.forEach(btn => {
     btn.classList.toggle('active', btn.dataset.lang === lang);
   });
@@ -158,16 +165,11 @@ function setLanguage(lang) {
   
   // Update app title
   if (DOM.appTitle) {
-    const titles = {
-      hi: 'मिट्टी की आवाज़',
-      kn: 'ಮಣ್ಣಿನ ಧ್ವನಿ',
-      mr: 'मातीचा आवाज',
-      en: 'Mitti Ki Awaaz'
-    };
+    const titles = { hi: 'मिट्टी की आवाज़', kn: 'ಮಣ್ಣಿನ ಧ್ವನಿ', mr: 'मातीचा आवाज', en: 'Mitti Ki Awaaz' };
     DOM.appTitle.textContent = titles[lang] || 'Mitti Ki Awaaz';
   }
   
-  // Update UI text
+  // Update all text elements
   document.querySelectorAll('[data-en]').forEach(el => {
     const text = el.dataset[lang];
     if (text) {
@@ -183,7 +185,6 @@ function setLanguage(lang) {
           el.textContent = text;
         }
       } else {
-        // For divs, spans, etc.
         const textNodes = [];
         el.childNodes.forEach(node => {
           if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
@@ -199,14 +200,11 @@ function setLanguage(lang) {
     }
   });
   
-  // Update chat greeting
+  // Update greeting
   if (DOM.chatContainer && DOM.chatContainer.children.length === 0) {
     DOM.chatContainer.innerHTML = '';
     addMessage('Krishi Sakhi', langData.greeting, false);
   }
-  
-  // Update status
-  updateStatus('online');
   
   // Update shortcuts
   DOM.shortcuts.forEach(btn => {
@@ -218,9 +216,8 @@ function setLanguage(lang) {
     }
   });
   
-  // Update pH label
+  updateStatus('online');
   updatePhDisplay();
-  
   localStorage.setItem('mittiLang', lang);
 }
 
@@ -234,7 +231,7 @@ function updateStatus(status) {
 }
 
 // ============================================
-// GEMINI API - REAL IMPLEMENTATION
+// GEMINI API - REAL
 // ============================================
 async function callGeminiAPI(message) {
   const lang = AppState.language;
@@ -246,14 +243,12 @@ async function callGeminiAPI(message) {
       body: JSON.stringify({ message, language: lang })
     });
     
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
     
     const data = await response.json();
     return data.response || getFallbackResponse(message);
   } catch (error) {
-    console.error('API Error:', error);
+    Logger.error('API Error:', error);
     return getFallbackResponse(message);
   }
 }
@@ -268,14 +263,12 @@ async function analyzeSoilAPI(ph) {
       body: JSON.stringify({ ph, language: lang })
     });
     
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
     
     const data = await response.json();
     return data.response || getFallbackResponse('soil');
   } catch (error) {
-    console.error('Soil API Error:', error);
+    Logger.error('Soil API Error:', error);
     return getFallbackResponse('soil');
   }
 }
@@ -292,32 +285,24 @@ function getFallbackResponse(query) {
       soil: '🌿 मिट्टी पीएच 5.8 है। नाइट्रोजन कम है। 2.5 किलो चूना प्रति बीघा डालें। मूंगफली या सरसों बोएं।',
       weather: '🌦️ अगले 5 दिन गर्मी रहेगी, शाम को हल्की बारिश। शाम को ही पानी दें।',
       scheme: '📋 पीएम-किसान योजना में ₹6000 सालाना मिलते हैं। चूना सब्सिडी 50% है।',
-      crop: '🌱 अम्लीय मिट्टी के लिए मूंगफली (K-6) या सरसों (पूसा बोल्ड) सर्वोत्तम हैं।',
-      price: '💰 मूंगफली ₹6,800-7,200/क्विंटल, सरसों ₹5,900-6,300/क्विंटल।',
       default: '👋 नमस्ते! मैं कृषि सखी हूँ। मिट्टी, मौसम, योजनाएं, फसल या भाव पूछें।'
     },
     kn: {
       soil: '🌿 ಮಣ್ಣಿನ pH 5.8. ಸಾರಜನಕ ಕಡಿಮೆ. 2.5 ಕೆಜಿ ಸುಣ್ಣ ಬಳಸಿ. ಶೇಂಗಾ ಅಥವಾ ಸಾಸಿವೆ ಬೆಳೆಯಿರಿ.',
       weather: '🌦️ 5 ದಿನ ಬಿಸಿ, ಸಂಜೆ ಮಳೆ ಸಾಧ್ಯತೆ. ಸಂಜೆ ನೀರುಣಿಸಿ.',
       scheme: '📋 ಪಿಎಂ-ಕಿಸಾನ್ ₹6000/ವರ್ಷ. ಸುಣ್ಣಕ್ಕೆ 50% ಸಹಾಯಧನ.',
-      crop: '🌱 ಆಮ್ಲೀಯ ಮಣ್ಣಿಗೆ ಶೇಂಗಾ (K-6) ಅಥವಾ ಸಾಸಿವೆ ಉತ್ತಮ.',
-      price: '💰 ಶೇಂಗಾ ₹6,800-7,200, ಸಾಸಿವೆ ₹5,900-6,300.',
       default: '👋 ನಮಸ್ತೆ! ನಾನು ಕೃಷಿ ಸಖಿ. ಮಣ್ಣು, ಹವಾಮಾನ, ಯೋಜನೆ, ಬೆಳೆ, ಬೆಲೆ ಕೇಳಿ.'
     },
     mr: {
       soil: '🌿 माती pH 5.8. नायट्रोजन कमी. 2.5 किलो चुना वापरा. भुईमूग किंवा मोहरी पेरा.',
       weather: '🌦️ 5 दिवस उष्णता, संध्याकाळी हलका पाऊस. संध्याकाळी पाणी द्या.',
       scheme: '📋 पीएम-किसान ₹6000/वर्ष. चुन्यावर 50% अनुदान.',
-      crop: '🌱 आम्लीय मातीसाठी भुईमूग (K-6) किंवा मोहरी उत्तम.',
-      price: '💰 भुईमूग ₹6,800-7,200, मोहरी ₹5,900-6,300.',
       default: '👋 नमस्कार! मी कृषी सखी. माती, हवामान, योजना, पीक, भाव विचारा.'
     },
     en: {
       soil: '🌿 Soil pH 5.8. Nitrogen low. Apply 2.5 kg lime per bigha. Grow Groundnut or Mustard.',
       weather: '🌦️ 5 days warm, evening showers. Irrigate in evenings.',
       scheme: '📋 PM-KISAN ₹6000/year. 50% lime subsidy available.',
-      crop: '🌱 For acidic soil: Groundnut (K-6) or Mustard (Pusa Bold).',
-      price: '💰 Groundnut ₹6,800-7,200, Mustard ₹5,900-6,300 per quintal.',
       default: '👋 Namaste! I am Krishi Sakhi. Ask about soil, weather, schemes, crops, or prices.'
     }
   };
@@ -333,18 +318,12 @@ function getFallbackResponse(query) {
   if (q.includes('योजना') || q.includes('scheme') || q.includes('सब्सिडी') || q.includes('ಸಬ್ಸಿಡಿ') || q.includes('अनुदान')) {
     return langData.scheme;
   }
-  if (q.includes('फसल') || q.includes('crop') || q.includes('ಬೆಳೆ') || q.includes('पीक') || q.includes('बीज')) {
-    return langData.crop;
-  }
-  if (q.includes('भाव') || q.includes('price') || q.includes('ಮಾರುಕಟ್ಟೆ') || q.includes('बाजार') || q.includes('मंडी')) {
-    return langData.price;
-  }
   
   return langData.default;
 }
 
 // ============================================
-// CHAT FUNCTIONS
+// CHAT
 // ============================================
 function addMessage(sender, text, isUser = false) {
   if (!DOM.chatContainer) return;
@@ -360,8 +339,6 @@ function addMessage(sender, text, isUser = false) {
   
   DOM.chatContainer.appendChild(div);
   DOM.chatContainer.scrollTop = DOM.chatContainer.scrollHeight;
-  
-  AppState.chatLog.push({ sender, text, timestamp: Date.now() });
 }
 
 function showTyping() {
@@ -371,8 +348,7 @@ function showTyping() {
   const div = document.createElement('div');
   div.className = 'message ai';
   div.id = 'typingIndicator';
-  const thinkingText = LANG[AppState.language].thinking;
-  div.innerHTML = `<div class="msg-avatar">🌾</div><div class="msg-bubble">${thinkingText}</div>`;
+  div.innerHTML = `<div class="msg-avatar">🌾</div><div class="msg-bubble">${LANG[AppState.language].thinking}</div>`;
   DOM.chatContainer.appendChild(div);
   DOM.chatContainer.scrollTop = DOM.chatContainer.scrollHeight;
 }
@@ -395,113 +371,23 @@ async function sendMessage(text) {
     removeTyping();
     addMessage('Krishi Sakhi', response, false);
     speakText(response);
-  } catch (error) {
+  } catch (e) {
     removeTyping();
-    const errorMsg = LANG[AppState.language].error;
-    addMessage('Krishi Sakhi', errorMsg, false);
+    addMessage('Krishi Sakhi', LANG[AppState.language].error, false);
   }
 }
 
 // ============================================
-// SPEECH RECOGNITION - FULL WORKING
+// SPEECH
 // ============================================
 let recognition = null;
 
-function initSpeech() {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) {
-    console.warn('Speech recognition not supported');
-    return false;
-  }
-  
-  recognition = new SR();
-  recognition.continuous = false;
-  recognition.interimResults = false;
-  recognition.lang = LANG[AppState.language].code || 'hi-IN';
-  
-  recognition.onstart = () => {
-    AppState.isListening = true;
-    if (DOM.micBtn) DOM.micBtn.classList.add('listening');
-    updateStatus('listening');
-    if (DOM.avatarPulse) DOM.avatarPulse.style.animationDuration = '0.5s';
-  };
-  
-  recognition.onresult = (e) => {
-    const text = e.results[0][0].transcript;
-    if (DOM.chatInput) DOM.chatInput.value = text;
-    sendMessage(text);
-  };
-  
-  recognition.onerror = (e) => {
-    console.error('Speech error:', e.error);
-    stopListening();
-    if (e.error !== 'no-speech') {
-      showToast('Could not hear. Please try again.', 'error');
-    }
-  };
-  
-  recognition.onend = () => {
-    stopListening();
-  };
-  
-  return true;
-}
-
-function startListening() {
-  if (!recognition) {
-    if (!initSpeech()) {
-      showToast('Speech not supported', 'error');
-      return;
-    }
-  }
-  
-  // Stop any ongoing speech
-  stopSpeaking();
-  
-  recognition.lang = LANG[AppState.language].code || 'hi-IN';
-  
-  try {
-    recognition.start();
-  } catch (e) {
-    console.error('Failed to start speech:', e);
-  }
-}
-
-function stopListening() {
-  if (recognition) {
-    try { recognition.stop(); } catch (e) {}
-  }
-  AppState.isListening = false;
-  if (DOM.micBtn) DOM.micBtn.classList.remove('listening');
-  updateStatus('online');
-  if (DOM.avatarPulse) DOM.avatarPulse.style.animationDuration = '2.5s';
-}
-
-function toggleListening() {
-  if (AppState.isListening) {
-    stopListening();
-  } else {
-    startListening();
-  }
-}
-
-// ============================================
-// TEXT TO SPEECH - FULL WORKING
-// ============================================
 function speakText(text) {
   if (!window.speechSynthesis) return;
-  
   window.speechSynthesis.cancel();
-  
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = LANG[AppState.language].code || 'hi-IN';
   utterance.rate = 0.9;
-  utterance.pitch = 1.0;
-  
-  // Try to find a native voice
-  const voices = window.speechSynthesis.getVoices();
-  const nativeVoice = voices.find(v => v.lang.startsWith(utterance.lang.split('-')[0]));
-  if (nativeVoice) utterance.voice = nativeVoice;
   
   utterance.onstart = () => {
     AppState.isSpeaking = true;
@@ -524,17 +410,58 @@ function speakText(text) {
   window.speechSynthesis.speak(utterance);
 }
 
-function stopSpeaking() {
-  if (window.speechSynthesis) {
-    window.speechSynthesis.cancel();
+function initSpeech() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return;
+  
+  recognition = new SR();
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.lang = LANG[AppState.language].code || 'hi-IN';
+  
+  recognition.onstart = () => {
+    AppState.isListening = true;
+    if (DOM.micBtn) DOM.micBtn.classList.add('listening');
+    updateStatus('listening');
+    if (DOM.avatarPulse) DOM.avatarPulse.style.animationDuration = '0.5s';
+  };
+  
+  recognition.onresult = (e) => {
+    const text = e.results[0][0].transcript;
+    if (DOM.chatInput) DOM.chatInput.value = text;
+    sendMessage(text);
+  };
+  
+  recognition.onerror = () => {
+    if (DOM.micBtn) DOM.micBtn.classList.remove('listening');
+    updateStatus('online');
+  };
+  
+  recognition.onend = () => {
+    AppState.isListening = false;
+    if (DOM.micBtn) DOM.micBtn.classList.remove('listening');
+    updateStatus('online');
+    if (DOM.avatarPulse) DOM.avatarPulse.style.animationDuration = '2.5s';
+  };
+}
+
+function toggleListening() {
+  if (!recognition) {
+    showToast('Speech not supported', 'error');
+    return;
   }
-  AppState.isSpeaking = false;
-  updateStatus('online');
-  if (DOM.avatarPulse) DOM.avatarPulse.style.animationDuration = '2.5s';
+  
+  if (AppState.isListening) {
+    recognition.stop();
+    return;
+  }
+  
+  recognition.lang = LANG[AppState.language].code || 'hi-IN';
+  recognition.start();
 }
 
 // ============================================
-// SOIL SCAN FUNCTIONS
+// SOIL
 // ============================================
 function updatePhDisplay() {
   const ph = AppState.ph;
@@ -568,15 +495,12 @@ function updatePhDisplay() {
 async function analyzeSoil() {
   const ph = AppState.ph;
   if (DOM.soilResult) DOM.soilResult.style.display = 'block';
-  if (DOM.soilResultText) {
-    DOM.soilResultText.textContent = LANG[AppState.language].thinking;
-  }
+  if (DOM.soilResultText) DOM.soilResultText.textContent = LANG[AppState.language].thinking;
   
   try {
     const response = await analyzeSoilAPI(ph);
     if (DOM.soilResultText) DOM.soilResultText.textContent = response;
     
-    // Save to history
     AppState.soilHistory.push({
       ph: ph,
       result: response,
@@ -584,12 +508,9 @@ async function analyzeSoil() {
     });
     localStorage.setItem('mittiSoilHistory', JSON.stringify(AppState.soilHistory));
     renderHistory();
-    
     speakText(response);
-  } catch (error) {
-    if (DOM.soilResultText) {
-      DOM.soilResultText.textContent = LANG[AppState.language].error;
-    }
+  } catch (e) {
+    if (DOM.soilResultText) DOM.soilResultText.textContent = LANG[AppState.language].error;
   }
 }
 
@@ -657,7 +578,6 @@ function showToast(msg, type = 'info') {
   DOM.toast.style.display = 'block';
   DOM.toast.style.background = type === 'error' ? '#D84315' : 
                                type === 'success' ? '#2E7D32' : 
-                               type === 'warning' ? '#E8A838' : 
                                '#1A1A2E';
   
   clearTimeout(toastTimer);
@@ -753,10 +673,8 @@ const CHECKLISTS = {
 function init() {
   console.log('🌾 Mitti Ki Awaaz - Starting...');
   
-  // 1. Init DOM
   initDOM();
   
-  // 2. Load saved state
   const savedLang = localStorage.getItem('mittiLang') || 'hi';
   const loggedIn = localStorage.getItem('mittiLoggedIn') === 'true';
   const savedUser = localStorage.getItem('mittiUser') || 'Rajesh Kumar';
@@ -765,13 +683,10 @@ function init() {
     try { AppState.soilHistory = JSON.parse(savedHistory); } catch (e) {}
   }
   
-  // 3. Set language
   setLanguage(savedLang);
   
-  // 4. Show loading
   showScreen('loadingScreen');
   
-  // 5. After 2 seconds, show login or app
   setTimeout(() => {
     if (loggedIn) {
       AppState.isLoggedIn = true;
@@ -793,46 +708,37 @@ function init() {
     }
   }, 2000);
   
-  // 6. Setup events
   setupEvents();
-  
-  // 7. Init speech
   initSpeech();
   
-  // 8. Load voices
   if (window.speechSynthesis) {
     window.speechSynthesis.getVoices();
     window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
   }
   
   console.log('🌾 Mitti Ki Awaaz - Ready!');
-  console.log(`📘 Language: ${LANG[AppState.language].name}`);
-  console.log(`👤 Logged in: ${AppState.isLoggedIn}`);
 }
 
 // ============================================
 // EVENT LISTENERS
 // ============================================
 function setupEvents() {
-  // Login
   if (DOM.loginBtn) DOM.loginBtn.addEventListener('click', login);
+  
   [DOM.pinCode, DOM.phoneNumber, DOM.farmerName].forEach(el => {
     if (el) el.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') login();
     });
   });
   
-  // Logout
   if (DOM.logoutBtn) DOM.logoutBtn.addEventListener('click', logout);
   
-  // Settings
   if (DOM.settingsBtn) {
     DOM.settingsBtn.addEventListener('click', () => {
       alert(`⚙️ Settings\n\nLanguage: ${LANG[AppState.language].name}\nUser: ${AppState.userName}\nScans: ${AppState.soilHistory.length}`);
     });
   }
   
-  // Language buttons
   DOM.langBtns.forEach(btn => {
     btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
   });
@@ -840,7 +746,6 @@ function setupEvents() {
     btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
   });
   
-  // Send message
   if (DOM.sendBtn) {
     DOM.sendBtn.addEventListener('click', () => {
       const text = DOM.chatInput ? DOM.chatInput.value.trim() : '';
@@ -856,15 +761,12 @@ function setupEvents() {
     });
   }
   
-  // Mic
   if (DOM.micBtn) DOM.micBtn.addEventListener('click', toggleListening);
   
-  // Navigation
   DOM.navItems.forEach(item => {
     item.addEventListener('click', () => navigateTo(item.dataset.screen));
   });
   
-  // Shortcuts
   DOM.shortcuts.forEach(btn => {
     btn.addEventListener('click', () => {
       const query = btn.dataset.query;
@@ -872,7 +774,6 @@ function setupEvents() {
     });
   });
   
-  // pH chips
   DOM.phChips.forEach(chip => {
     chip.addEventListener('click', () => {
       DOM.phChips.forEach(c => c.classList.remove('active'));
@@ -882,10 +783,8 @@ function setupEvents() {
     });
   });
   
-  // Analyze soil
   if (DOM.analyzeBtn) DOM.analyzeBtn.addEventListener('click', analyzeSoil);
   
-  // Speak result
   if (DOM.speakResultBtn) {
     DOM.speakResultBtn.addEventListener('click', () => {
       const text = DOM.soilResultText ? DOM.soilResultText.textContent : '';
@@ -893,7 +792,6 @@ function setupEvents() {
     });
   }
   
-  // Acknowledge alerts
   DOM.ackBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       btn.textContent = '✅ Received';
@@ -903,7 +801,6 @@ function setupEvents() {
     });
   });
   
-  // Speak alerts
   DOM.speakAlertBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       const alertId = btn.dataset.alert;
@@ -915,7 +812,6 @@ function setupEvents() {
     });
   });
   
-  // Checklists
   DOM.checklistBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       const type = btn.dataset.checklist;
@@ -929,14 +825,12 @@ function setupEvents() {
     });
   });
   
-  // Close checklist
   if (DOM.closeChecklist) {
     DOM.closeChecklist.addEventListener('click', () => {
       if (DOM.checklistDisplay) DOM.checklistDisplay.style.display = 'none';
     });
   }
   
-  // Generate scheme
   if (DOM.generateSchemeBtn) {
     DOM.generateSchemeBtn.addEventListener('click', () => {
       const lang = AppState.language;
@@ -956,7 +850,7 @@ function setupEvents() {
         DOM.schemeItems.appendChild(item);
       }
       
-      const msg = lang === 'hi' ? '✅ योजना सबमिट! ✅ Scheme submitted!' : 
+      const msg = lang === 'hi' ? '✅ योजना सबमिट!' : 
                   lang === 'kn' ? '✅ ಯೋಜನೆ ಸಲ್ಲಿಸಲಾಗಿದೆ!' : 
                   lang === 'mr' ? '✅ योजना सबमिट!' : 
                   '✅ Scheme submitted!';
@@ -973,14 +867,5 @@ document.addEventListener('DOMContentLoaded', init);
 
 console.log('🌾 ==========================================');
 console.log('🌾 MITTI KI AWAAZ - Krishi Sakhi');
-console.log('🌾 Version 2.0.0 - Full Working');
-console.log('🌾 ==========================================');
-console.log('📘 Features:');
-console.log('  ✅ Gemini API Integration');
-console.log('  ✅ 4 Languages (Hindi, Kannada, Marathi, English)');
-console.log('  ✅ Speech to Text');
-console.log('  ✅ Text to Speech');
-console.log('  ✅ Soil Analysis');
-console.log('  ✅ Disaster Alerts');
-console.log('  ✅ Sarpanch Dashboard');
+console.log('🌾 Version 2.0.0');
 console.log('🌾 ==========================================');
